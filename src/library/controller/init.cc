@@ -35,14 +35,17 @@
  */
 
  #include <config.h>
- #include <controller.h>
+ #include <private/controller.h>
  #include <iostream>
  #include <unistd.h>
  #include <udjat/tools/mainloop.h>
  #include <udjat/tools/threadpool.h>
  #include <udjat/tools/configuration.h>
- #include <udjat/tools/system/stat.h>
  #include <udjat/tools/logger.h>
+
+ #ifdef HAVE_UDJAT_SYSINFO
+ 	#include <udjat/tools/system/stat.h>
+ #endif // HAVE_UDJAT_SYSINFO
 
  #include <sys/socket.h>
  #include <sys/types.h>
@@ -74,7 +77,7 @@
 
 	Process::Controller::Controller() : Handler(-1,Handler::oninput) {
 
-		Logger::trace() << "PID Watcher is starting" << endl;
+		Logger::String{"PID Watcher is starting"}.trace();
 
 		// Load pids
 		{
@@ -91,8 +94,8 @@
 		// interface device (PF_NETLINK) which is a datagram oriented
 		// service (SOCK_DGRAM). The protocol used is the connector
 		// protocol (NETLINK_CONNECTOR)
-		fd = socket(PF_NETLINK, SOCK_DGRAM, NETLINK_CONNECTOR);
-		if(fd < 0) {
+		Handler::values.fd = socket(PF_NETLINK, SOCK_DGRAM, NETLINK_CONNECTOR);
+		if(Handler::values.fd < 0) {
 
 			clog << "Error '" << strerror (errno) << "' creating netlink socket" << endl;
 
@@ -101,7 +104,7 @@
 			// http://man7.org/linux/man-pages/man7/netlink.7.html
 			// https://github.com/reubenhwk/radvd/blob/master/netlink.c
 			static const int val = 1;
-			if (setsockopt(fd, SOL_NETLINK, NETLINK_NO_ENOBUFS, &val, sizeof(val)) < 0) {
+			if (setsockopt(Handler::values.fd, SOL_NETLINK, NETLINK_NO_ENOBUFS, &val, sizeof(val)) < 0) {
 				clog << "Unable to setsockopt NETLINK_NO_ENOBUFS: " << strerror(errno) << endl;
 			}
 
@@ -115,7 +118,7 @@
 				my_nla.nl_groups = CN_IDX_PROC;
 				my_nla.nl_pid = getpid();
 
-				if(bind(fd, (struct sockaddr *)&my_nla, sizeof(my_nla)) < 0) {
+				if(bind(Handler::values.fd, (struct sockaddr *)&my_nla, sizeof(my_nla)) < 0) {
 					throw std::system_error(errno, std::system_category(), "Can't bind process list connector");
 				}
 
@@ -143,16 +146,16 @@
 				cn_hdr->ack = 0;
 				cn_hdr->len = sizeof(enum proc_cn_mcast_op);
 
-				if(send(fd, nl_hdr, nl_hdr->nlmsg_len, 0) != nl_hdr->nlmsg_len) {
+				if(send(Handler::values.fd, nl_hdr, nl_hdr->nlmsg_len, 0) != nl_hdr->nlmsg_len) {
 					throw std::system_error(errno, std::system_category(), "Failed to send proc connector mcast ctl op");
 				}
 
 				MainLoop::Handler::enable();
-				Logger::trace() << "PID Watcher is active" << endl;
+				Logger::String{"PID Watcher is active"}.trace();
 
 			} catch(const exception &e) {
 
-				clog << e.what() << endl;
+				Logger::String{"Error loading process list: ",e.what()}.error();
 				close();
 
 			}
@@ -171,11 +174,13 @@
 		});
 
 		// Load system usage.
+ #ifdef HAVE_UDJAT_SYSINFO
 		{
 			System::Stat stat;
 			system.running = stat.getRunning();
 			system.idle = stat.getIdle();
 		}
+ #endif // HAVE_UDJAT_SYSINFO
 
 	}
 
@@ -186,7 +191,7 @@
 
 	void Process::Controller::on_timer() {
 
-		if(fd < 0) {
+		if(Handler::values.fd < 0) {
 
 			// No kernel watcher, update from /proc.
 			try {
@@ -227,7 +232,7 @@
 		from_nla.nl_pid 	= 1;
 		from_nla_len		= sizeof(from_nla);
 
-		ssize_t recv_len = recvfrom(fd, buff, BUFF_SIZE, MSG_DONTWAIT,(struct sockaddr*)&from_nla, &from_nla_len);
+		ssize_t recv_len = recvfrom(Handler::values.fd, buff, BUFF_SIZE, MSG_DONTWAIT,(struct sockaddr*)&from_nla, &from_nla_len);
 
 		if(recv_len < 0) {
 			cerr << "Error '" << strerror(errno) << "' reading proc connector event" << endl;
@@ -260,28 +265,47 @@
 			#pragma GCC diagnostic push
 			#pragma GCC diagnostic ignored "-Wswitch"
 			switch(ev->what) {
-			case proc_event::PROC_EVENT_EXEC:
+			case PROC_EVENT_EXEC:
 				debug("Process '",((pid_t) ev->event_data.exec.process_pid),"' starts");
 				insert((pid_t) ev->event_data.exec.process_pid);
 				break;
 
-			case proc_event::PROC_EVENT_EXIT:
+			case PROC_EVENT_EXIT:
 				debug("Process '",((pid_t) ev->event_data.exec.process_pid),"' ends");
 				remove((pid_t) ev->event_data.exec.process_pid);
 				break;
 
-#ifdef HAVE_PROC_EVENT_PTRACE
+#ifdef PROC_EVENT_PTRACE
 			// http://lists.openwall.net/netdev/2011/07/12/105
-			case proc_event::PROC_EVENT_PTRACE:
-				debug("Ptrace detected on PID ",((pid_t),ev->event_data.id.process_pid));
+			case PROC_EVENT_PTRACE:
+				Logger::String{"Ptrace detected on PID ",((pid_t) ev->event_data.id.process_pid)}.warning();
 				break;
-#endif // HAVE_PROC_EVENT_PTRACE
+#endif // PROC_EVENT_PTRACE
 
 #ifdef HAVE_PROC_EVENT_COREDUMP
-			case proc_event::PROC_EVENT_COREDUMP:
-				debug("Coredump detected on PID ",((pid_t) ev->event_data.id.process_pid));
+			case PROC_EVENT_COREDUMP:
+				Logger::String{"Coredump detected on PID ",((pid_t) ev->event_data.id.process_pid)}.warning();
 				break;
 #endif // HAVE_PROC_EVENT_COREDUMP
+
+#ifdef HAVE_PROC_EVENT_UID
+			case PROC_EVENT_UID:
+				Logger::String{
+					"UID change on PID ",((pid_t) ev->event_data.id.process_pid),
+					" from ",ev->event_data.id.r.ruid,
+					" to ",ev->event_data.id.e.euid
+				}.trace();
+				break;
+#endif // HAVE_PROC_EVENT_UID
+
+#ifdef HAVE_PROC_EVENT_GID
+			case PROC_EVENT_GID:
+				Logger::String{
+					"GID change on PID ",((pid_t) ev->event_data.id.process_pid),
+					" from ",ev->event_data.id.r.rgid,
+					" to ",ev->event_data.id.e.egid
+				}.trace();
+#endif // HAVE_PROC_EVENT_GID
 
 /*
 			case proc_event::PROC_EVENT_FORK:

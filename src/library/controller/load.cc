@@ -18,7 +18,7 @@
  */
 
  #include <config.h>
- #include <controller.h>
+ #include <private/controller.h>
  #include <dirent.h>
  #include <sys/types.h> // for opendir(), readdir(), closedir()
  #include <iostream>
@@ -58,9 +58,7 @@
 
 		closedir(dir);
 
-#ifdef DEBUG
-		cout << "Loaded " << entries.size() << " entries from /proc" << endl;
-#endif // DEBUG
+		Logger::String{"Loaded ", entries.size(), " entries from /proc"}.trace();
 
 	}
 

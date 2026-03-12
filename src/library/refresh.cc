@@ -23,9 +23,12 @@
  #include <sys/types.h>
  #include <sys/stat.h>
  #include <fcntl.h>
- #include <udjat/tools/system/stat.h>
  #include <udjat/tools/threadpool.h>
  #include <iostream>
+
+ #ifdef HAVE_UDJAT_SYSINFO
+ 	#include <udjat/tools/system/stat.h>
+ #endif // HAVE_UDJAT_SYSINFO
 
  using namespace std;
 

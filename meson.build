@@ -21,6 +21,7 @@ project(
 	'udjatprocess', 
 	['cpp'],
 	version: '2.0.0',
+  meson_version: '>=1.3.0',
 	default_options : ['c_std=c11', 'cpp_std=c++17'],
 	license: 'GPL-3.0-or-later',
 )
@@ -88,6 +89,8 @@ add_project_arguments(cxx.get_supported_arguments(compiler_flags), language: 'cp
 #
 # Configuration
 #
+cc = meson.get_compiler('cpp')
+
 app_conf = configuration_data()
 app_conf.set_quoted('PACKAGE_NAME', meson.project_name())
 app_conf.set_quoted('PACKAGE_VERSION', meson.project_version())
@@ -107,12 +110,30 @@ if cxx.compiles('#include <unistd.h>', name : 'unistd.h')
   app_conf.set('HAVE_UNISTD_H', 1)
 endif
 
+if cc.has_header_symbol('linux/cn_proc.h', 'PROC_EVENT_PTRACE')
+  app_conf.set('HAVE_PROC_EVENT_PTRACE', 1)
+endif
+
+if cc.has_header_symbol('linux/cn_proc.h', 'PROC_EVENT_COREDUMP')
+  app_conf.set('HAVE_PROC_EVENT_COREDUMP', 1)
+endif
+
+if cc.has_header_symbol('linux/cn_proc.h', 'PROC_EVENT_UID')
+  app_conf.set('HAVE_PROC_EVENT_UID', 1)
+endif
+
+if cc.has_header_symbol('linux/cn_proc.h', 'PROC_EVENT_GID')
+  app_conf.set('HAVE_PROC_EVENT_GID', 1)
+endif
+
 includes_dir = include_directories('src/include')
 
 #
 # Sources
 #
 lib_src = [
+  'src/library/module.cc',
+  'src/library/refresh.cc',
   'src/library/agent/abstract.cc',
   'src/library/agent/counter.cc',
   'src/library/agent/exename.cc',
