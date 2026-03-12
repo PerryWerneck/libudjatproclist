@@ -51,12 +51,12 @@
 			/// @brief Test if the identifier exename match the agent.
 			/// @brief exename The identifier exename.
 			/// @return true if the identifier match the agent requirements.
-			bool probe(const char *exename) const noexcept;
+			virtual bool probe(const char *exename) const noexcept;
 
 			/// @brief Test if the identifier match the agent.
 			/// @param ident A process identifier.
 			/// @return true if the identifier match the agent requirements.
-			bool probe(const Identifier &ident) const noexcept;
+			virtual bool probe(const Identifier &ident) const noexcept;
 
 			std::shared_ptr<Abstract::State> computeState() override;
 
