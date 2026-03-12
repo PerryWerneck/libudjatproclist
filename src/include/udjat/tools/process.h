@@ -20,7 +20,10 @@
  #pragma once
 
  #include <udjat/defs.h>
+ #include <cstdint>
  #include <list>
+ #include <mutex>
+ #include <string>
 
  namespace Udjat {
 
@@ -63,7 +66,7 @@
 
 			friend class Controller;
 
-			pid_t pid = -1;
+			pid_t procpid = -1;
 
 			/// @brief Mutex for serialization.
 			static std::recursive_mutex guard;
@@ -85,7 +88,7 @@
 			} cpu;
 
 			/// @brief Current state
-			State state = (State) -1;
+			State current_state = (State) -1;
 
 			/// @brief Set current state
 			void set(const State state);
@@ -94,7 +97,7 @@
 			void reset();
 
 		public:
-			Identifier(pid_t p) : pid(p) {
+			constexpr Identifier(pid_t p) : procpid{p} {
 			}
 
 			~Identifier();
@@ -169,44 +172,50 @@
 				void get(Udjat::Value &value) const;
 
 				/// @brief The size of memory that are currently resident in RAM in bytes.
-				unsigned long long getRSS() const;
+				unsigned long long rss() const;
 
 				/// @brief Virtual memory size in bytes.
-				unsigned long long getVSize() const {
+				unsigned long long vsize() const {
 					return (unsigned long long) vsize;
 				}
 
 				/// @brief The amount of resident memory that is shared with other processes.
-				unsigned long long getShared() const;
+				unsigned long long shared() const;
 
 			};
 
 			constexpr bool operator==(const pid_t pid) const {
-				return this->pid == pid;
+				return this->procpid == pid;
 			}
 
 			constexpr bool operator==(const Identifier &entry) const {
-				return this->pid == entry.pid;
+				return this->procpid == entry.procpid;
 			}
 
 			constexpr bool operator==(const State &state) const {
-				return this->state == state;
+				return this->current_state == state;
 			}
 
-			operator pid_t() const {
-				return this->pid;
+			inline operator pid_t() const {
+				return this->procpid;
 			}
 
-			inline pid_t getPid() const noexcept {
-				return this->pid;
+			inline pid_t pid() const noexcept {
+				return this->procpid;
 			}
 
-			std::string exename() const;
+			/// @brief Get the process name.
+			/// @return String containing the process name.
+			std::string to_string() const;
 
-			State getState();
+			State state();
+
+			inline operator State() {
+				return this->current_state;
+			}
 
 			/// @brief Get CPU usage in %.
-			float getCPU() const {
+			float cpu_usage() const {
 				return (this->cpu.percent * 100);
 			}
 

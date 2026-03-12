@@ -20,9 +20,10 @@
  #pragma once
 
  #include <udjat/defs.h>
- #include <udjat/agent.h>
+ #include <udjat/agent/abstract.h>
  #include <udjat/agent/state.h>
- #include <udjat/process/identifier.h>
+ #include <udjat/tools/process.h>
+ #include <udjat/tools/xml.h>
 
  namespace Udjat {
 
@@ -42,7 +43,7 @@
 
 		protected:
 			Agent();
-			Agent(const pugi::xml_node &node);
+			Agent(const XML::Node &node);
 
 			inline const Identifier * getPid() const noexcept {
 				return this->pid;
@@ -69,11 +70,11 @@
 			virtual void set(Identifier *info);
 
 		public:
-			static std::shared_ptr<Udjat::Abstract::Agent> AgentFactory(const pugi::xml_node &node);
+			static std::shared_ptr<Udjat::Abstract::Agent> AgentFactory(const XML::Node &node);
 
 			virtual ~Agent();
 
-			void get(const Request &request, Response &response) override;
+			Value & getProperties(Value &value) const override;
 
 			// bool hasStates() const noexcept override;
 
