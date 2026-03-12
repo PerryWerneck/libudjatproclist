@@ -72,7 +72,7 @@
 			~Agent() override;
 
 			inline const pid_t pid() const noexcept {
-				return proc->pid();
+				return proc ? proc->pid() : (pid_t) -1;
 			}
 
 			inline const Identifier * process() const noexcept {
@@ -111,6 +111,13 @@
 
 			/// @brief Get field value in % of the system total.
 			float percent(Field field) const;
+
+			inline Process::Identifier::State process_state() const noexcept {
+				if(proc) {
+					return proc->state();
+				}
+				return Process::Identifier::Dead;
+			}
 
  		};
 
