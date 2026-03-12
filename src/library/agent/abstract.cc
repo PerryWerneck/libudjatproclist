@@ -17,9 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include "private.h"
- #include <controller.h>
- #include <udjat/tools/system/info.h>
+ #include <config.h>
+ #include <udjat/defs.h>
+ #include <private/agent.h>
+ #include <private/controller.h>
+
+ #ifdef HAVE_UDJAT_SYSINFO
+	 #include <udjat/tools/system/info.h>
+ #endif // HAVE_UDJAT_SYSINFO
 
  namespace Udjat {
 
@@ -29,7 +34,7 @@
 		"Shared"
 	};
 
-	Process::Agent::Field Process::Agent::getField(const char *name) {
+	Process::Agent::Field Process::Agent::get_field(const char *name) {
 
 		for(size_t ix = 0; ix < N_ELEMENTS(fieldNames); ix++) {
 
@@ -58,7 +63,7 @@
 
 		try {
 
-			exe = ident.exename();
+			exe = ident.to_string();
 
 		} catch(...) {
 
@@ -69,10 +74,10 @@
 		return probe(exe.c_str());
 	}
 
-	Process::Identifier::State Process::Agent::getState() const noexcept {
+	Process::Identifier::State Process::Agent::process_state() const noexcept {
 
-		if(pid) {
-			return pid->getState();
+		if(proc) {
+			return proc->state();
 		}
 
 		return Process::Identifier::Dead;
@@ -91,6 +96,7 @@
 
 	}
 
+	/*
 	void Process::Agent::get(const Request &request, Response &response) {
 
 		super::get(request,response);
@@ -102,11 +108,6 @@
 			Identifier::Stat().get(response);
 		}
 
-	}
-
-	/*
-	bool Process::Agent::probe(const Identifier &ident) noexcept {
-		return false;
 	}
 	*/
 
@@ -120,78 +121,73 @@
 
 	}
 
-	void Process::Agent::set(Identifier *pid) {
+	void Process::Agent::set(Identifier *proc) {
 
-		if(pid == this->pid) {
+		if(proc == this->proc) {
+			// No changes, just return.
 			return;
 		}
 
-		this->pid = pid;
+		this->proc = proc;
 
 		// Notify state change.
-		if(pid) {
-			info() << "Detected on pid '" << ((pid_t) *pid) << "'" << endl;
+		if(proc) {
+			Logger::String{"Detected on pid '",((pid_t) *proc),"'"}.info(name());
 		} else {
-			info() << "Not available" << endl;
+			Logger::String{"Not available"}.info(name());
 		}
 
 		// Mark as updated and changed.
 		updated(true);
 	}
 
-	/*
-	bool Process::Agent::hasStates() const noexcept {
-		return !states.empty();
-	}
-	*/
+	float Process::Agent::cpu_usage() const noexcept {
 
-	float Process::Agent::getCPU() const noexcept {
-
-		if(pid) {
-			return pid->getCPU();
+		if(proc) {
+			return proc->cpu_usage();
 		}
 
 		return 0;
 	}
 
-	unsigned long long Process::Agent::getRSS() const {
-		if(!pid) {
-			return 0;
+	unsigned long long Process::Agent::rss() const {
+		if(proc) {
+			return Identifier::Stat(proc).rss();
 		}
-		return Identifier::Stat(pid).getRSS();
+		return 0;
 	}
 
-	unsigned long long Process::Agent::getVSize() const {
-		if(!pid) {
-			return 0;
+	unsigned long long Process::Agent::vsize() const {
+		if(proc) {
+			return Identifier::Stat(proc).vsize();
 		}
-		return Identifier::Stat(pid).getVSize();
+		return 0;
 	}
 
-	unsigned long long Process::Agent::getShared() const {
-		if(!pid) {
-			return 0;
+	unsigned long long Process::Agent::shared() const {
+		if(!proc) {
+			return Identifier::Stat(proc).shared();
 		}
-		return Identifier::Stat(pid).getShared();
+		return 0;
 	}
 
-	unsigned long long Process::Agent::getValue(Field field) const {
+	unsigned long long Process::Agent::value(Field field) const {
 
-		if(!pid) {
+		if(!proc) {
 			return 0;
 		}
 
-		Identifier::Stat stat(pid);
+		Identifier::Stat stat(proc);
 
 		switch(field) {
 		case Rss:
-			return stat.getRSS();
+			return stat.rss();
 
 		case VSize:
-			return stat.getVSize();
+			return stat.vsize();
 
 		case Shared:
-			return stat.getShared();
+			return stat.shared();
 
 		default:
 			throw runtime_error("Unexpected field id");
@@ -199,20 +195,23 @@
 
 	}
 
-	float Process::Agent::getPercent(Field field) const {
+	float Process::Agent::percent(Field field) const {
 
-		if(!pid) {
+		if(!proc) {
 			return 0;
 		}
 
-		Identifier::Stat stat(pid);
+#ifdef HAVE_UDJAT_SYSINFO
+
+		Identifier::Stat stat(proc);
 
 		switch(field) {
 		case Rss:
 
+
 			// RSS - Return resident pages / totalram.
 			{
-				float value = (float) stat.getRSS();
+				float value = (float) stat.rss();
 
 				if(value > 0) {
 					return  value / ((float) Udjat::System::Info().totalram);
@@ -254,5 +253,9 @@
 		return 0;
 
 	}
+#else
 
+	throw system_error(ENOTSUP, system_category(),"This library was not compiled with sysinfo support");
+
+#endif
  }

@@ -19,11 +19,14 @@
 
  #pragma once
 
+ #include <config.h>
  #include <udjat/defs.h>
- #include <udjat/process/agent.h>
- #include <udjat/process/identifier.h>
+ #include <udjat/agent/process.h>
+ #include <udjat/agent/process.h>
+ #include <udjat/tools/process.h>
  #include <udjat/tools/handler.h>
  #include <udjat/tools/timer.h>
+ #include <udjat/tools/mainloop.h>
  #include <mutex>
  #include <list>
 
@@ -82,7 +85,7 @@
 
 			size_t count(const Process::Identifier::State state);
 
-			inline float getSystemCpuUse() const noexcept {
+			inline float system_cpu_usage() const noexcept {
 				return system.cpu;
 			}
 

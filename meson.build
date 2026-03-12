@@ -18,7 +18,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 project(
-	'udjatsysinfo', 
+	'udjatprocess', 
 	['cpp'],
 	version: '2.0.0',
 	default_options : ['c_std=c11', 'cpp_std=c++17'],
@@ -70,7 +70,7 @@ compiler_flags = [
   '-fPIC',
   '-DHAVE_CONFIG_H=1',
   '-DBUILD_DATE='+time_epoch,
-  '-DLOG_DOMAIN="sysinfo"',
+  '-DLOG_DOMAIN="process"',
 ]
 
 if enable_debug
