@@ -18,7 +18,7 @@
  */
 
  #include <config.h>
- #include <controller.h>
+ #include <private/controller.h>
  #include <string>
  #include <sys/types.h>
  #include <sys/stat.h>
