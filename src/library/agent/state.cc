@@ -22,6 +22,7 @@
  #include <private/agent.h>
  #include <udjat/agent/state.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/parse.h>
 
  using Pid = Udjat::Process::Identifier;
 
@@ -115,7 +116,7 @@
 				unsigned long long to = 0;
 
 			public:
-				Value(Process::Agent::Field f, const pugi::xml_node &node) : Process::Agent::State(node), field(f) {
+				Value(Process::Agent::Field f, const XML::Node &node) : Process::Agent::State(node), field(f) {
 					parse_byte_range(node,from,to);
 				}
 
