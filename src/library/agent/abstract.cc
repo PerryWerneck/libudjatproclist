@@ -55,6 +55,11 @@
 		Process::Controller::getInstance().remove(this);
 	}
 
+	bool Process::Agent::probe(const char *exec) const noexcept {
+
+		
+	}
+
 	bool Process::Agent::probe(const Identifier &ident) const noexcept {
 
 		string exe;
@@ -94,20 +99,13 @@
 
 	}
 
-	/*
-	void Process::Agent::get(const Request &request, Response &response) {
-
-		super::get(request,response);
-
-		if(pid) {
-			pid->get(response);
-			Identifier::Stat(pid).get(response);
-		} else {
-			Identifier::Stat().get(response);
+	Udjat::Value & Process::Agent::getProperties(Udjat::Value &value) const {
+		super::getProperties(value);
+		if(proc) {
+			proc->getProperties(value);
 		}
-
+		return value;
 	}
-	*/
 
 	void Process::Agent::set(const pid_t pid) {
 
