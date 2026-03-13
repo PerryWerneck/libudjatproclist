@@ -86,7 +86,8 @@
 
 	std::string Process::Identifier::to_string() const {
 
-		String pathname{"/proc/",std::to_string((unsigned int) pid()).c_str(),"/exe"};
+		String spid{std::to_string((unsigned int) pid()).c_str()};
+		String pathname{"/proc/",spid.c_str(),"/exe"};
 
 		char name[4096];
 
@@ -94,8 +95,8 @@
 		if(sz > 0) {
 			name[sz] = 0;
 		} else {
-			Logger::String{"Error '",strerror(errno),"' getting exename for pid ",pid}.error();
-			return String{"pid",std::to_string((unsigned int) pid()).c_str()};
+			Logger::String{"Error '",strerror(errno),"' getting exename for pid ",spid.c_str()}.error();
+			return String{"pid",spid.c_str()};
 		}
 
 		return name;

@@ -179,10 +179,21 @@
 				/// @brief The amount of memory currently resident in RAM
 				unsigned long long rss() const;
 
-				inline const char state() const {
+				inline const char state() const noexcept {
 					return properties.state;
 				}
+
+				inline unsigned long vsize() const noexcept {
+					return properties.vsize;
+				}
 				
+				inline unsigned long utime() const noexcept {
+					return properties.utime;
+				}
+
+				inline unsigned long stime() const noexcept {
+					return properties.stime;
+				}
 			};
 
 			constexpr bool operator==(const pid_t pid) const {
@@ -220,6 +231,14 @@
 				return (this->cpu.percent * 100);
 			}
 
+			inline unsigned long vsize() const {
+				return Stat{*this}.vsize();
+			}
+
+			inline unsigned long shared() const {
+				return Stat{*this}.shared();
+			}
+			
 		};
 
 

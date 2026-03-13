@@ -32,7 +32,7 @@
 		return new Process::Module(name);
 	}
 
-	Process::Module::Module(const char *name, const char *description) : Udjat::Module{name,description} {
+	Process::Module::Module(const char *name, const char *description) : Udjat::Module{name,description}, Udjat::Abstract::Agent::Factory{"process"} {
 	}
 
 	Process::Module::~Module() {

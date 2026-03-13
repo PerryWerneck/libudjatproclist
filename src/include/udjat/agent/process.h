@@ -110,12 +110,7 @@
 			/// @brief Get field value in % of the system total.
 			float percent(Field field) const;
 
-			inline Process::Identifier::State process_state() const noexcept {
-				if(proc) {
-					return proc->state();
-				}
-				return Process::Identifier::Dead;
-			}
+			Process::Identifier::State process_state() const noexcept;
 
  		};
 

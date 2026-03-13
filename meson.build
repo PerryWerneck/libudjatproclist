@@ -223,7 +223,7 @@ if host_machine.system() == 'windows'
     version : libversion,
     soversion : libversion,
     gnu_symbol_visibility: 'hidden',
-    dependencies: lib_deps,
+    dependencies: lib_deps + extra_libs,
     link_args: [ 
       '-lws2_32',
     ],
@@ -239,7 +239,7 @@ if host_machine.system() == 'windows'
     link_with: dynamic,
     install_dir: libudjat.get_variable('module_path'),
     gnu_symbol_visibility: 'hidden',
-    dependencies: lib_deps,
+    dependencies: lib_deps + extra_libs,
     include_directories: includes_dir
   )
 
@@ -253,7 +253,7 @@ else
     soversion : libversion,
     cpp_args: [ '-ffat-lto-objects' ],
     gnu_symbol_visibility: 'hidden',
-    dependencies: lib_deps,
+    dependencies: lib_deps + extra_libs,
     include_directories: includes_dir
   )
 
@@ -268,7 +268,7 @@ else
     link_with: dynamic,
     install_dir: libudjat.get_variable('module_path'),
     gnu_symbol_visibility: 'hidden',
-    dependencies: lib_deps,
+    dependencies: lib_deps + extra_libs,
     include_directories: includes_dir
   )
 
@@ -279,7 +279,7 @@ static_library(
   config_src + lib_src,
   install: true,
   cpp_args: [ '-DSTATIC_LIBRARY', '-fno-lto' ],
-  dependencies: lib_deps,
+    dependencies: lib_deps + extra_libs,
   include_directories: includes_dir
 )
 

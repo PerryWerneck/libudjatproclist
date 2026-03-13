@@ -84,9 +84,9 @@
 
 					Identifier::Stat stat(*ix);
 
-					ix->set((Identifier::State) stat.state);
+					ix->set((Identifier::State) stat.state());
 
-					unsigned long time = (stat.utime + stat.stime);
+					unsigned long time = (stat.utime() + stat.stime());
 
 					if(time) {
 

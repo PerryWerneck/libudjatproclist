@@ -22,6 +22,7 @@
  #include <private/agent.h>
  #include <private/controller.h>
  #include <udjat/tools/system/info.h>
+ #include <udjat/agent/process.h>
 
  namespace Udjat {
 
@@ -87,7 +88,7 @@
 #endif // DEBUG
 		Process::Controller::getInstance().insert(this);
 
-		if(!pid) {
+		if(!proc) {
 			updated(true);
 		}
 
@@ -156,14 +157,14 @@
 
 	unsigned long long Process::Agent::vsize() const {
 		if(proc) {
-			return Identifier::Stat(proc).vsize();
+			return proc->vsize();
 		}
 		return 0;
 	}
 
 	unsigned long long Process::Agent::shared() const {
 		if(!proc) {
-			return Identifier::Stat(proc).shared();
+			return proc->shared();
 		}
 		return 0;
 	}
@@ -198,7 +199,7 @@
 			return 0;
 		}
 
-		Identifier::Stat stat(proc);
+		Identifier::Stat stat{proc};
 
 		switch(field) {
 		case Rss:
@@ -220,7 +221,7 @@
 			// VSize - Return APP VSize / (totalram + totalswap)
 			{
 				Udjat::System::Info info;
-				float value = (float) stat.getVSize();
+				float value = (float) stat.vsize();
 
 				if(value > 0) {
 					return value / ((float) (info.totalram + info.totalswap));
@@ -232,7 +233,7 @@
 
 			// Shared  - Return APP Shared / totalshared
 			{
-				float value = (float) stat.getShared();
+				float value = (float) stat.shared();
 
 				if(value > 0) {
 					return  value / ((float) Udjat::System::Info().sharedram);
