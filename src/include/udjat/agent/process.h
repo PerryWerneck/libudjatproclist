@@ -83,8 +83,6 @@
 
 			std::shared_ptr<Abstract::State> StateFactory(const XML::Node &node) override;
 
-			Process::Identifier::State process_state() const noexcept;
-
 			float cpu_usage() const noexcept;
 
 			/// @brief The size of memory that are currently resident in RAM in bytes.

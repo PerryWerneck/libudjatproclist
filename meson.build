@@ -48,11 +48,22 @@ libversion = '@0@.@1@'.format(pkg_major_version,pkg_minor_version)
 # Required libraries
 #
 libudjat = dependency('libudjat') 
-sysinfo = dependency('libudjatsysinfo-static', required: false)
 lib_deps = [
   libudjat,
-  sysinfo
 ]
+
+extra_libs = []
+
+sysinfo = dependency('libudjatsysinfo', required: false, static: true)
+if not sysinfo.found()
+  sysinfo_s = dependency(
+      'sysinfo',
+      required: true,
+      fallback: [ 'sysinfo', 'static_library' ],
+      default_options: ['default_library=static']  
+  ) 
+  extra_libs += [ sysinfo_s ]
+endif
 
 #
 # Compiler flags
@@ -101,10 +112,6 @@ app_conf.set('PACKAGE_VERSION_MICRO', pkg_micro_version)
 
 app_conf.set('PRODUCT_NAME', libudjat.get_variable('product_name'))
 app_conf.set('PRODUCT_VERSION', libudjat.version())
-
-if sysinfo.found()
-  app_conf.set('HAVE_UDJAT_SYSINFO', 1)
-endif
 
 if cxx.compiles('#include <unistd.h>', name : 'unistd.h')
   app_conf.set('HAVE_UNISTD_H', 1)

@@ -42,11 +42,8 @@
  #include <udjat/tools/threadpool.h>
  #include <udjat/tools/configuration.h>
  #include <udjat/tools/logger.h>
-
- #ifdef HAVE_UDJAT_SYSINFO
- 	#include <udjat/tools/system/stat.h>
- #endif // HAVE_UDJAT_SYSINFO
-
+ #include <udjat/tools/system/stat.h>
+ 
  #include <sys/socket.h>
  #include <sys/types.h>
 
@@ -174,14 +171,12 @@
 		});
 
 		// Load system usage.
- #ifdef HAVE_UDJAT_SYSINFO
-		{
+ 		{
 			System::Stat stat;
 			system.running = stat.getRunning();
 			system.idle = stat.getIdle();
 		}
- #endif // HAVE_UDJAT_SYSINFO
-
+ 
 	}
 
 	Process::Controller::~Controller() {

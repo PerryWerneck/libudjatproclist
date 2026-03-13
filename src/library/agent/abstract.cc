@@ -21,10 +21,7 @@
  #include <udjat/defs.h>
  #include <private/agent.h>
  #include <private/controller.h>
-
- #ifdef HAVE_UDJAT_SYSINFO
-	 #include <udjat/tools/system/info.h>
- #endif // HAVE_UDJAT_SYSINFO
+ #include <udjat/tools/system/info.h>
 
  namespace Udjat {
 
@@ -201,8 +198,6 @@
 			return 0;
 		}
 
-#ifdef HAVE_UDJAT_SYSINFO
-
 		Identifier::Stat stat(proc);
 
 		switch(field) {
@@ -253,9 +248,4 @@
 		return 0;
 
 	}
-#else
-
-	throw system_error(ENOTSUP, system_category(),"This library was not compiled with sysinfo support");
-
-#endif
  }

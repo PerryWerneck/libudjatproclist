@@ -61,10 +61,10 @@
 		throw runtime_error("Invalid or unexpected process state");
 	}
 
-	void Process::Identifier::get(Udjat::Value &value) const {
-
+	Udjat::Value & Process::Identifier::getProperties(Udjat::Value &value) const {
+		Stat(*this).getProperties(value);
 		value["cpu"].setFraction(cpu.percent);
-
+		return value;
 	}
 
 	Process::Identifier::State Process::Identifier::StateFactory(const char *name) {
@@ -84,10 +84,9 @@
 		set(Dead);
 	}
 
-	std::string Process::Identifier::exename() const {
+	std::string Process::Identifier::to_string() const {
 
-		string pathname{"/proc/"};
-		pathname += std::to_string((unsigned int) pid) + "/exe";
+		String pathname{"/proc/",std::to_string((unsigned int) pid()).c_str(),"/exe"};
 
 		char name[4096];
 
@@ -95,10 +94,8 @@
 		if(sz > 0) {
 			name[sz] = 0;
 		} else {
-#ifndef DEBUG
-			cerr << "Error '" << strerror(errno) << "' getting exename for pid " << pid << endl;
-#endif // DEBUG
-			return string{"pid"} + std::to_string((unsigned int) pid);
+			Logger::String{"Error '",strerror(errno),"' getting exename for pid ",pid}.error();
+			return String{"pid",std::to_string((unsigned int) pid()).c_str()};
 		}
 
 		return name;
@@ -111,24 +108,21 @@
 	}
 
 	void Process::Identifier::set(const State state) {
-
-		if(state == this->state)
+		if(state == current_state)
 			return;
-
-		this->state = state;
-
+		current_state = state;
 	}
 
-	Process::Identifier::State Process::Identifier::getState() {
+	Process::Identifier::State Process::Identifier::state() {
 
-		if(state == (State) -1) {
+		if(current_state == (State) -1) {
 
 			// No state, get it.
-			set( (State) Stat(this).state);
+			set( (State) Stat{this}.state() );
 
 		}
 
-		return state;
+		return current_state;
 	}
 
  }

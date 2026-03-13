@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+ #include <config.h>
  #include <private/controller.h>
  #include <unistd.h>
  #include <string>
@@ -25,11 +26,8 @@
  #include <fcntl.h>
  #include <udjat/tools/threadpool.h>
  #include <iostream>
-
- #ifdef HAVE_UDJAT_SYSINFO
- 	#include <udjat/tools/system/stat.h>
- #endif // HAVE_UDJAT_SYSINFO
-
+ #include <udjat/tools/system/stat.h>
+ 
  using namespace std;
 
  namespace Udjat {

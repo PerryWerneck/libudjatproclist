@@ -1,2 +1,4 @@
 .vscode
 *.1
+.wraplock
+subprojects
