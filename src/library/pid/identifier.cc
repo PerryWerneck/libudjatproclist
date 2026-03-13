@@ -94,9 +94,13 @@
 		ssize_t sz = readlink(pathname.c_str(), name, 4095);
 		if(sz > 0) {
 			name[sz] = 0;
+
+		} else if(errno == ENOENT) { 
+			// TODO: Get process name from /proc/pid/stat
+			return String{"[",spid.c_str(),"]"};
 		} else {
-			Logger::String{"Error '",strerror(errno),"' getting exename for pid ",spid.c_str()}.error();
-			return String{"pid",spid.c_str()};
+			Logger::String{pathname.c_str(),": ",strerror(errno)}.error();
+			return String{"[",spid.c_str(),"]"};
 		}
 
 		return name;

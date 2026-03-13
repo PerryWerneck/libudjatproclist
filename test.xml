@@ -29,7 +29,7 @@
 	</agent>
 	
 	<!-- Count zombie process -->
-	<agent type='process name='zombiecount' process-state='zombie' update-timer='60'>
+	<agent type='process' name='zombiecount' process-state='zombie' update-timer='60'>
 	
 	</agent>
 	
