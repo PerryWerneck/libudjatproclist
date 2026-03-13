@@ -55,12 +55,22 @@
 		Process::Controller::getInstance().remove(this);
 	}
 
-	bool Process::Agent::probe(const char *exec) const noexcept {
-
-		
+	bool Process::Agent::probe(const char *name) const noexcept {
+		if(proc) {
+			return strcasecmp(proc->to_string().c_str(),name) == 0;
+		}
+		return false;
 	}
 
 	bool Process::Agent::probe(const Identifier &ident) const noexcept {
+
+		if(!proc) {
+			return false;
+		}
+
+		if(proc == &ident) {
+			return true;
+		}
 
 		string exe;
 
