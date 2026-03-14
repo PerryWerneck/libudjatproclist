@@ -109,6 +109,14 @@ Summary: HTTP module for %{name}
 %{_libdir}/*.a
 %{_libdir}/pkgconfig/*.pc
 
+%dir %{_includedir}/udjat/module
+%{_includedir}/udjat/module/*.h
+
+%dir %{_includedir}/udjat/agent
+%{_includedir}/udjat/agent/*.h
+
+%dir %{_includedir}/udjat/tools
+%{_includedir}/udjat/tools/*.h
 
 %post -n %{name}%{_libvrs} -p /sbin/ldconfig
 
