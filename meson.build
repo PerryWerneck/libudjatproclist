@@ -42,7 +42,7 @@ libversion = '@0@.@1@'.format(pkg_major_version,pkg_minor_version)
 #
 # i18n
 #
-#subdir('po')
+subdir('po')
 
 #
 # Required libraries
@@ -294,3 +294,17 @@ executable(
   include_directories: includes_dir
 )
 
+install_headers(
+  'src/include/udjat/agent/process.h',
+  subdir: 'udjat/agent'  
+)
+
+install_headers(
+  'src/include/udjat/module/process.h',
+  subdir: 'udjat/module'  
+)
+
+install_headers(
+  'src/include/udjat/tools/process.h',
+  subdir: 'udjat/tools'  
+)

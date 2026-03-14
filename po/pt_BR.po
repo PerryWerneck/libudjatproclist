@@ -1,0 +1,114 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <perry.werneck@gmail.com>, 2022.
+# Perry Werneck <perry.werneck@gmail.com>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: udjat-module-sysinfo 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-14 11:49-0300\n"
+"PO-Revision-Date: 2026-03-14 11:49-0300\n"
+"Last-Translator: Perry Werneck <perry.werneck@gmail.com>\n"
+"Language-Team: Brazilian Portuguese <perry.werneck@gmail.com>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: Poedit 3.8\n"
+
+#: src/library/pid/identifier.cc:36
+msgid "Running"
+msgstr "Em execução"
+
+#: src/library/pid/identifier.cc:37
+msgid "Sleeping"
+msgstr "Pausado"
+
+#: src/library/pid/identifier.cc:38
+msgid "Waiting"
+msgstr "Esperando"
+
+#: src/library/pid/identifier.cc:39
+msgid "Zombie"
+msgstr "Zumbi"
+
+#: src/library/pid/identifier.cc:40
+msgid "Stopped"
+msgstr "Parado"
+
+#: src/library/pid/identifier.cc:41
+msgid "Tracing stop"
+msgstr "Parado por trace"
+
+#: src/library/pid/identifier.cc:42
+msgid "Paging"
+msgstr ""
+
+#: src/library/pid/identifier.cc:43
+msgid "Dead"
+msgstr "Morto"
+
+#: src/library/pid/identifier.cc:44
+msgid "Dead-compat"
+msgstr ""
+
+#: src/library/pid/identifier.cc:45
+msgid "Wakekill"
+msgstr ""
+
+#: src/library/pid/identifier.cc:46
+msgid "Waking"
+msgstr ""
+
+#: src/library/pid/identifier.cc:47
+msgid "Parked"
+msgstr ""
+
+#~ msgid "${value} of total memory in use"
+#~ msgstr "Memória total em uso é ${value}"
+
+#~ msgid "Can't get system load average"
+#~ msgstr "Não foi possível obter a média de uso do sistema"
+
+#~ msgid "System load in the last minute"
+#~ msgstr "Carga do sistema no último minuto"
+
+#~ msgid "Average system load in the last minute"
+#~ msgstr "Média de carga do sistema no último mínuto"
+
+#~ msgid "System load in the last 5 minutes"
+#~ msgstr "Carga do sistema nos últimos 5 minutos"
+
+#~ msgid "Average system load in the last five minutes"
+#~ msgstr "Média de carga do sistema nos últimos cinco minutos"
+
+#~ msgid "System load in the last 15 minutes"
+#~ msgstr "Carga do sistema nos últimos 15 minutos"
+
+#~ msgid "Average system load in the last fifteen minutes"
+#~ msgstr "Média de carga do sistema nos últimos quinze minutos"
+
+#~ msgid "System load is ${value}"
+#~ msgstr "Carga do sistema é ${value}"
+
+#~ msgid "Can't get system information"
+#~ msgstr "Não foi possível obter informações do sistema"
+
+#~ msgid "Swap usage is ${value}"
+#~ msgstr "Uso de swap é ${value}"
+
+#~ msgid "System Time"
+#~ msgstr "Horário do sistema"
+
+#~ msgid "System up Time"
+#~ msgstr "Tempo que o sistema está ligado"
+
+#~ msgid "Average disk speed"
+#~ msgstr "Velocidade média do disco"
+
+#~ msgid " in "
+#~ msgstr " em "
