@@ -1,0 +1,118 @@
+#
+# spec file for package libudjatproclist
+#
+# Copyright (c) <2024> Perry Werneck <perry.werneck@gmail.com>.
+#
+# All modifications and additions to the file contributed by third parties
+# remain the property of their copyright owners, unless otherwise agreed
+# upon. The license for this file, and modifications and additions to the
+# file, is the same license as for the pristine package itself (unless the
+# license for the pristine package is not an Open Source License, in which
+# case the license is the MIT License). An "Open Source License" is a
+# license that conforms to the Open Source Definition (Version 1.9)
+# published by the Open Source Initiative.
+
+# Please submit bugfixes or comments via https://github.com/PerryWerneck/libudjatlist/issues
+#
+
+%define module_name proclist
+
+%define product_name %(pkg-config --variable=product_name libudjat)
+%define product_version %(pkg-config --variable=product_version libudjat)
+%define module_path %(pkg-config --variable=module_path libudjat)
+
+Summary:		Process handling library for %{product_name}  
+Name:			libudjat%{module_name}
+Version: 2.0.0
+Release:		0
+License:		LGPL-3.0
+Source:			%{name}-%{version}.tar.xz
+
+URL:			https://github.com/PerryWerneck/libudjat%{module_name}
+
+Group:			Development/Libraries/C and C++
+BuildRoot:		/var/tmp/%{name}-%{version}
+
+BuildRequires:	gcc-c++ >= 5
+BuildRequires:	pkgconfig(libudjat) >= 2.0.0
+BuildRequires:	pkgconfig(libudjatsysinfo) >= 2.0.0
+BuildRequires:	meson >= 0.61.4
+
+%description
+Process handling library for %{product_name}
+
+C++ System information classes for use with lib%{product_name}
+
+#---[ Library ]-------------------------------------------------------------------------------------------------------
+
+%define MAJOR_VERSION %(echo %{version} | cut -d. -f1)
+%define MINOR_VERSION %(echo %{version} | cut -d. -f2 | cut -d+ -f1)
+%define _libvrs %{MAJOR_VERSION}_%{MINOR_VERSION}
+
+%package -n %{name}%{_libvrs}
+Summary: Process handlink library for %{product_name}
+Provides: libudjat%{module_name}%{MAJOR_VERSION} = %{version}
+
+%description -n %{name}%{_libvrs}
+System information library for %{product_name}
+
+C++ System information classes for use with lib%{product_name}
+
+%lang_package -n %{name}%{_libvrs}
+
+#---[ Development ]---------------------------------------------------------------------------------------------------
+
+%package devel
+Summary: Development files for %{name}
+Provides: libudjat%{module_name}%{MAJOR_VERSION}-devel = %{version}
+Requires: %{name}%{_libvrs} = %{version}
+
+%description devel
+Process handling library for %{product_name}
+
+C++ System information classes for use with lib%{product_name}
+
+#---[ Module ]--------------------------------------------------------------------------------------------------------
+
+%package -n %{product_name}-module-%{module_name}
+Summary: HTTP module for %{name}
+
+%description -n %{product_name}-module-%{module_name}
+%{product_name} module enabling system information agents.
+
+#---[ Build & Install ]-----------------------------------------------------------------------------------------------
+
+%prep
+%autosetup
+%meson
+
+%build
+%meson_build
+
+%install
+%meson_install
+%find_lang %{name}-%{MAJOR_VERSION}.%{MINOR_VERSION} langfiles
+
+%files -n %{name}%{_libvrs}
+%defattr(-,root,root)
+%{_libdir}/%{name}.so.%{MAJOR_VERSION}.%{MINOR_VERSION}
+
+%files -n %{name}%{_libvrs}-lang -f langfiles
+
+%files -n %{product_name}-module-%{module_name}
+%{module_path}/*.so
+
+%files devel
+%defattr(-,root,root)
+
+%{_libdir}/*.so
+%{_libdir}/*.a
+%{_libdir}/pkgconfig/*.pc
+
+
+%post -n %{name}%{_libvrs} -p /sbin/ldconfig
+
+%postun -n %{name}%{_libvrs} -p /sbin/ldconfig
+
+%changelog
+
