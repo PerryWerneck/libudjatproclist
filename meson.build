@@ -18,7 +18,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 project(
-	'udjatprocess', 
+	'udjatproclist', 
 	['cpp'],
 	version: '2.0.0',
   meson_version: '>=1.3.0',
