@@ -54,7 +54,7 @@ lib_deps = [
 
 extra_libs = []
 
-sysinfo = dependency('libudjatsysinfo', required: false, static: true)
+sysinfo = dependency('libudjatsysinfo', required: false)
 if sysinfo.found()
   lib_deps += [ sysinfo ]
 else

@@ -12,8 +12,3 @@ src/library/module.cc
 src/library/pid/identifier.cc
 src/library/pid/stat.cc
 src/library/refresh.cc
-src/include/udjat/tools/process.h
-src/include/udjat/agent/process.h
-src/include/udjat/module/process.h
-src/include/private/agent.h
-src/include/private/controller.h
