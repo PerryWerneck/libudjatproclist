@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2026 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -17,21 +17,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include "private.h"
- #include <controller.h>
+ #pragma once
 
+ #include <config.h>
+ #include <udjat/defs.h>
+ #include <udjat/module/abstract.h>
+ #include <udjat/agent/abstract.h>
+ #include <udjat/tools/xml.h>
+ 
  namespace Udjat {
 
-	Process::StateCounterAgent::StateCounterAgent(const char *statename, const pugi::xml_node &node) : Udjat::Agent<unsigned int>(node), state(Process::Identifier::StateFactory(statename)) {
-	}
+	namespace Process {
 
-	void Process::StateCounterAgent::start() {
-		super::start(Process::Controller::getInstance().count(state));
-	}
+		/// @brief Generic Process module.
+		class UDJAT_API Module : public Udjat::Module, private Udjat::Abstract::Agent::Factory {			
+		public:
 
-	bool Process::StateCounterAgent::refresh() {
-		return set(Process::Controller::getInstance().count(state));
+			static Udjat::Module * Factory(const char *name = "process");
+
+			Module(const char *name = "process", const char *description = "Process monitor");
+			virtual ~Module();
+
+			std::shared_ptr<Abstract::Agent> AgentFactory(const XML::Node &node) const override;
+
+		};
+
 	}
 
  }
-

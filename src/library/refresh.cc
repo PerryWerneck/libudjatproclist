@@ -17,16 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include <controller.h>
+ #include <config.h>
+ #include <private/controller.h>
  #include <unistd.h>
  #include <string>
  #include <sys/types.h>
  #include <sys/stat.h>
  #include <fcntl.h>
- #include <udjat/tools/system/stat.h>
  #include <udjat/tools/threadpool.h>
  #include <iostream>
-
+ #include <udjat/tools/system/stat.h>
+ 
  using namespace std;
 
  namespace Udjat {
@@ -83,9 +84,9 @@
 
 					Identifier::Stat stat(*ix);
 
-					ix->set((Identifier::State) stat.state);
+					ix->set((Identifier::State) stat.state());
 
-					unsigned long time = (stat.utime + stat.stime);
+					unsigned long time = (stat.utime() + stat.stime());
 
 					if(time) {
 

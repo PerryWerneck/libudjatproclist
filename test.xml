@@ -6,32 +6,32 @@
 	<module name='information' required='no' />
 
 	<!-- Monitor by process name -->
-	<process name='codeblocks' exename='/usr/bin/codeblocks'>
+	<agent type='process' name='codeblocks' exename='/usr/bin/codeblocks'>
 	
 		<state name='dead' process-state='dead' summary='Codeblocks is dead' />
 		<state name='sleeping' process-state='sleeping' summary='Codeblocks is sleeping' />
 	
-	</process>
+	</agent>
 	
-	<process name='gdm' exename='/usr/sbin/gdm'>
+	<agent type='process' name='gdm' exename='/usr/sbin/gdm'>
 	
 		<state name='available' process-state='available' summary='GDM is available' />
 		<state name='not-available' process-state='not-available' summary='GDM is NOT available' />
 	
-	</process>
+	</agent>
 
 	<!-- Monitor by pidfile -->
-	<process name='dm' pidfile='/var/run/displaymanager.pid' update-timer='60'>
+	<agent type='process' name='dm' pidfile='/var/run/displaymanager.pid' update-timer='60'>
 
 		<state name='available' process-state='available' summary='Display manager is available' />
 		<state name='not-available' process-state='not-available' summary='Display manager is NOT available' />
 
-	</process>
+	</agent>
 	
 	<!-- Count zombie process -->
-	<process name='zombiecount' process-state='zombie' update-timer='60'>
+	<agent type='process' name='zombiecount' process-state='zombie' update-timer='60'>
 	
-	</process>
+	</agent>
 	
 </config>
 

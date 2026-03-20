@@ -17,10 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include "private.h"
- #include <unistd.h>
+ #include <config.h>
+ #include <udjat/defs.h>
+ #include <private/agent.h>
+ #include <private/controller.h>
  #include <iostream>
  #include <fstream>
+
+ #ifdef HAVE_UNISTD_H
+	 #include <unistd.h>
+ #endif // HAVE_UNISTD_H
 
  namespace Udjat {
 
@@ -37,7 +43,7 @@
 
 	bool Process::PidFileAgent::refresh() {
 
-		if(!getPid()) {
+		if(!process()) {
 
 			// Check for pidfile.
 			if(access(pidfile,R_OK) == 0) {
@@ -51,7 +57,7 @@
 				pf.close();
 
 				if(pid) {
-					info() << "Got '" << pid << "' from '" << pidfile << "'" << endl;
+					Logger::String{"Got '", pid, "' from '", pidfile, "'"}.info(name());
 					set((pid_t) pid);
 				}
 
@@ -59,8 +65,8 @@
 
 		}
 
-
 		return Process::Agent::refresh();
+
 	}
 
  }

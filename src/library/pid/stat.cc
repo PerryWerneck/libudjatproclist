@@ -18,7 +18,7 @@
  */
 
  #include <config.h>
- #include <controller.h>
+ #include <private/controller.h>
  #include <string>
  #include <sys/types.h>
  #include <sys/stat.h>
@@ -255,26 +255,10 @@
 
  namespace Udjat {
 
-	Process::Identifier::Stat::Stat(pid_t pid) : Stat() {
-		if(pid > 0) {
-			set(pid);
+	Process::Identifier::Stat::Stat(pid_t pid) {
+		if(pid < 0) {
+			return;
 		}
-	}
-
-	Process::Identifier::Stat::Stat(const Process::Identifier *info) : Stat() {
-		if(info) {
-			set((pid_t) *info);
-		}
-	}
-
-	void Process::Identifier::Stat::get(Udjat::Value &value) const {
-		value["vsize"] = getVSize();
-		value["rss"] = getRSS();
-//		value["shared"] = getShared();
-		value["mode"] = Process::Identifier::StateNameFactory((Process::Identifier::State) state).name;
-	}
-
-	void Process::Identifier::Stat::set(pid_t pid) {
 
 		// http://stackoverflow.com/questions/16011677/calculating-cpu-usage-using-proc-files
 		// https://github.com/mmcilroy/cpu_usage
@@ -282,11 +266,9 @@
 
 		int fd = open((string{"/proc/"} + std::to_string(pid) + "/stat").c_str(),O_RDONLY);
 		if(fd <  0) {
-
 			if(errno == ENOENT) {
 				return;
 			}
-
 			throw std::system_error(errno, std::system_category(), "Can't open /proc/pid/stat");
 		}
 
@@ -310,56 +292,56 @@
 		ssize_t sz = sscanf(
 			ptr+1,
 			" %c %d %d %d %d %d %u %lu %lu %lu %lu %lu %lu %ld %ld %ld %ld %ld %ld %llu %lu %ld %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %d %d %u %u %llu %lu %ld %lu %lu %lu %lu %lu %lu %lu %d",
-			&state,
-			&ppid,
-			&pgrp,
-			&session,
-			&tty_nr,
-			&tpgid,
-			&flags,
-			&minflt,
-			&cminflt,
-			&majflt,
-			&cmajflt,
-			&utime,
-			&stime,
-			&cutime,
-			&cstime,
-			&priority,
-			&nice,
-			&num_threads,
-			&itrealvalue,
-			&starttime,
-			&vsize,
-			&rss,
-			&rsslim,
-			&startcode,
-			&endcode,
-			&startstack,
-			&kstkesp,
-			&kstkeip,
-			&signal,
-			&blocked,
-			&sigignore,
-			&sigcatch,
-			&wchan,
-			&nswap,
-			&cnswap,
-			&exit_signal,
-			&processor,
-			&rt_priority,
-			&policy,
-			&blkio_ticks,
-			&guest_time,
-			&cguest_time,
-			&start_data,
-			&end_data,
-			&start_brk,
-			&arg_start,
-			&arg_end,
-			&env_start,
-			&env_end,
-			&exit_code
+			&properties.state,
+			&properties.ppid,
+			&properties.pgrp,
+			&properties.session,
+			&properties.tty_nr,
+			&properties.tpgid,
+			&properties.flags,
+			&properties.minflt,
+			&properties.cminflt,
+			&properties.majflt,
+			&properties.cmajflt,
+			&properties.utime,
+			&properties.stime,
+			&properties.cutime,
+			&properties.cstime,
+			&properties.priority,
+			&properties.nice,
+			&properties.num_threads,
+			&properties.itrealvalue,
+			&properties.starttime,
+			&properties.vsize,
+			&properties.rss,
+			&properties.rsslim,
+			&properties.startcode,
+			&properties.endcode,
+			&properties.startstack,
+			&properties.kstkesp,
+			&properties.kstkeip,
+			&properties.signal,
+			&properties.blocked,
+			&properties.sigignore,
+			&properties.sigcatch,
+			&properties.wchan,
+			&properties.nswap,
+			&properties.cnswap,
+			&properties.exit_signal,
+			&properties.processor,
+			&properties.rt_priority,
+			&properties.policy,
+			&properties.blkio_ticks,
+			&properties.guest_time,
+			&properties.cguest_time,
+			&properties.start_data,
+			&properties.end_data,
+			&properties.start_brk,
+			&properties.arg_start,
+			&properties.arg_end,
+			&properties.env_start,
+			&properties.env_end,
+			&properties.exit_code
 		);
 
 		if(sz != 50) {
@@ -368,15 +350,27 @@
 
 	}
 
-	unsigned long long Process::Identifier::Stat::getRSS() const {
-
-		// https://stackoverflow.com/questions/669438/how-to-get-memory-usage-at-runtime-using-c
-		unsigned long long pgsize = sysconf(_SC_PAGE_SIZE);
-		return ((unsigned long long) rss) * pgsize;
-
+	Process::Identifier::Stat::Stat(const Process::Identifier *info) : Stat{(pid_t) *info} {
 	}
 
-	unsigned long long Process::Identifier::Stat::getShared() const {
+	Udjat::Value & Process::Identifier::Stat::getProperties(Udjat::Value &value) const {
+		value["vsize"] = properties.vsize;
+		value["rss"] = rss();
+		value["shared"] = shared();
+		value["mode"] = Process::Identifier::StateNameFactory((Process::Identifier::State) properties.state).name;
+		return value;
+	}
+
+	unsigned long long Process::Identifier::Stat::pgsize() {
+		return sysconf(_SC_PAGE_SIZE);
+	}
+
+	unsigned long long Process::Identifier::Stat::rss() const {
+		// https://stackoverflow.com/questions/669438/how-to-get-memory-usage-at-runtime-using-c
+		return ((unsigned long long) properties.rss) * pgsize();
+	}
+
+	unsigned long long Process::Identifier::Stat::shared() const {
 		throw system_error(ENOTSUP, system_category(),"Shared memory by process is not implemented");
 	}
 

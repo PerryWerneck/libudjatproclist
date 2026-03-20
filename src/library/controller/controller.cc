@@ -35,9 +35,12 @@
  */
 
  #include <config.h>
- #include <controller.h>
+ #include <private/controller.h>
  #include <iostream>
- #include <unistd.h>
+
+ #ifdef HAVE_UNISTD_H
+	 #include <unistd.h>
+ #endif // HAVE_UNISTD_H
 
  using namespace std;
 
@@ -75,7 +78,7 @@
 
 		lock_guard<recursive_mutex> lock(guard);
 
-		std::string exec = identifier.exename();
+		std::string exec = identifier.to_string();
 
 //#ifdef DEBUG
 //		cout << "Adding process " << ((pid_t) identifier) << " - " << exec << " - " << agents.size() << endl;
@@ -83,7 +86,7 @@
 
 		for(auto agent : agents) {
 
-			if(!agent->pid && agent->probe(exec.c_str())) {
+			if(!agent->proc && agent->probe(exec.c_str())) {
 				agent->set(&identifier);
 			}
 
@@ -97,7 +100,7 @@
 
 		for(auto it = identifiers.begin(); it != identifiers.end(); it++) {
 
-			if(it->getPid() == pid) {
+			if(it->pid() == pid) {
 				return &(*it);
 			}
 
@@ -117,10 +120,9 @@
 
 		} catch(const exception &e) {
 
-			cerr << "Error '" << e.what() << "' inserting pid " << pid << endl;
+			Logger::String{"Error '",e.what(),"' inserting pid '",pid,"'"}.error();
 
 		}
-
 
 	}
 
@@ -150,7 +152,7 @@
 
 				if(e == pid) {
 					for(auto agent : agents) {
-						if(agent->pid == &e) {
+						if(agent->process() == &e) {
 							agent->set( (Identifier *) nullptr);
 						}
 					}
@@ -162,7 +164,7 @@
 
 		} catch(const exception &e) {
 
-			cerr << "Error '" << e.what() << "' inserting pid " << pid << endl;
+			Logger::String{"Error '", e.what(), "' inserting pid ", pid}.error();
 
 		}
 

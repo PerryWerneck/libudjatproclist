@@ -19,36 +19,12 @@
 
  #include <config.h>
  #include <udjat/agent.h>
- #include <udjat/process/agent.h>
  #include <udjat/module.h>
- #include <udjat/factory.h>
- #include <udjat/moduleinfo.h>
-
- using namespace std;
-
- static const Udjat::ModuleInfo moduleinfo{"Process information module"};
+ #include <udjat/module/process.h>
 
  /// @brief Register udjat module.
  Udjat::Module * udjat_module_init() {
-
-	class Module : public Udjat::Module, public Udjat::Factory {
-	private:
-
-	public:
-		Module() : Udjat::Module("process",moduleinfo), Factory("process",moduleinfo) {
-		};
-
-		virtual ~Module() {
-		}
-
-		std::shared_ptr<Udjat::Abstract::Agent> AgentFactory(const Udjat::Abstract::Object UDJAT_UNUSED(&parent), const pugi::xml_node &node) const override {
-			return Udjat::Process::Agent::AgentFactory(node);
-		}
-
-
-	};
-
-	return new Module();
+	return new Udjat::Process::Module();
  }
 
 

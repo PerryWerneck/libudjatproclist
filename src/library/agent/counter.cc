@@ -17,19 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include "private.h"
+ #include <config.h>
+ #include <udjat/defs.h>
+ #include <private/agent.h>
+ #include <private/controller.h>
 
  namespace Udjat {
 
-	Process::ExeNameAgent::ExeNameAgent(const char *e, const pugi::xml_node &node) : Process::Agent(node), exename(e) {
+	Process::StateCounterAgent::StateCounterAgent(const char *statename, const pugi::xml_node &node) : Udjat::Agent<unsigned int>(node), state(Process::Identifier::StateFactory(statename)) {
 	}
 
-	bool Process::ExeNameAgent::probe(const char *name) const noexcept {
+	void Process::StateCounterAgent::start() {
+		super::start(Process::Controller::getInstance().count(state));
+	}
 
-		if(strcasecmp(name,this->exename) == 0)
-			return true;
-
-		return false;
+	bool Process::StateCounterAgent::refresh() {
+		return set(Process::Controller::getInstance().count(state));
 	}
 
  }

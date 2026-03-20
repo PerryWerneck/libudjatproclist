@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2024 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -18,21 +18,29 @@
  */
 
  #include <config.h>
+
  #include <udjat/defs.h>
- #include <udjat/loader.h>
  #include <udjat/module/abstract.h>
+ #include <udjat/tools/logger.h>
+ #include <udjat/tools/url.h>
+ #include <udjat/module/process.h>
+ #include <udjat/agent/process.h>
 
- using namespace Udjat;
- using namespace std;
+ namespace Udjat {
 
- int main(int argc, char **argv) {
-	return loader(argc,argv,[](Application &app) -> int {
+	Udjat::Module * Process::Module::Factory(const char *name) {
+		return new Process::Module(name);
+	}
 
-		debug("Initializing " PACKAGE_NAME "...");
-		udjat_module_init();
-		debug("... initilization of " PACKAGE_NAME " is complete");
+	Process::Module::Module(const char *name, const char *description) : Udjat::Module{name,description}, Udjat::Abstract::Agent::Factory{"process"} {
+	}
 
-		return 0;
-	});
+	Process::Module::~Module() {
+	}
+
+	std::shared_ptr<Abstract::Agent> Process::Module::AgentFactory(const XML::Node &node) const {
+		return Process::Agent::AgentFactory(node);
+	}
 
  }
+

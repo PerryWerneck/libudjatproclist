@@ -19,20 +19,21 @@
 
  #include <config.h>
  #include <udjat/defs.h>
- #include <udjat/loader.h>
- #include <udjat/module/abstract.h>
+ #include <private/agent.h>
+ #include <private/controller.h>
 
- using namespace Udjat;
- using namespace std;
+ namespace Udjat {
 
- int main(int argc, char **argv) {
-	return loader(argc,argv,[](Application &app) -> int {
+	Process::ExeNameAgent::ExeNameAgent(const char *e, const pugi::xml_node &node) : Process::Agent(node), exename(e) {
+	}
 
-		debug("Initializing " PACKAGE_NAME "...");
-		udjat_module_init();
-		debug("... initilization of " PACKAGE_NAME " is complete");
+	bool Process::ExeNameAgent::probe(const char *name) const noexcept {
 
-		return 0;
-	});
+		if(strcasecmp(name,this->exename) == 0)
+			return true;
+
+		return false;
+	}
 
  }
+

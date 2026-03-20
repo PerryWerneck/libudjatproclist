@@ -17,9 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include "private.h"
+ #include <config.h>
+ #include <udjat/defs.h>
+ #include <private/agent.h>
  #include <udjat/agent/state.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/parse.h>
 
  using Pid = Udjat::Process::Identifier;
 
@@ -35,10 +38,8 @@
 		}
 
 		bool test(const Process::Agent &agent) const noexcept override {
-#ifdef DEBUG
-			agent.trace() << "State=" << agent.getState() << " mine=" << state << endl;
-#endif // DEBUG
-			return agent.getState() == state;
+			debug("State=",agent.process_state()," mine=",state);
+			return agent.process_state() == state;
 		}
 
 	};
@@ -53,11 +54,9 @@
 		}
 
 		bool test(const Process::Agent &agent) const noexcept override {
-			auto state = agent.getState();
+			auto state = agent.process_state();
 			bool available = (state != Pid::Dead && state != Pid::DeadCompat && state != Pid::Zombie && state != Pid::Stopped);
-#ifdef DEBUG
-			agent.trace() << "State=" << agent.getState() << " available=" << (available ? "yes" : "no") << endl;
-#endif // DEBUG
+			debug("State=",agent.process_state()," available=",(available ? "yes" : "no"));
 			return available == required;
 		}
 
@@ -73,7 +72,7 @@
 		}
 
 	public:
-		ProcessUsage(const pugi::xml_node &node) : Process::Agent::State(node) {
+		ProcessUsage(const XML::Node &node) : Process::Agent::State(node) {
 			XML::parse(node,from,to);
 		}
 
@@ -107,7 +106,7 @@
 
 		attribute = node.attribute("field-name");
 		if(attribute) {
-			Process::Agent::Field field = Process::Agent::getField(attribute.as_string(Process::Agent::fieldNames[0]));
+			Process::Agent::Field field = Process::Agent::get_field(attribute.as_string(Process::Agent::fieldNames[0]));
 
 			/// @brief State based on field value.
 			class Value : public Process::Agent::State {
@@ -117,12 +116,12 @@
 				unsigned long long to = 0;
 
 			public:
-				Value(Process::Agent::Field f, const pugi::xml_node &node) : Process::Agent::State(node), field(f) {
+				Value(Process::Agent::Field f, const XML::Node &node) : Process::Agent::State(node), field(f) {
 					parse_byte_range(node,from,to);
 				}
 
 				bool test(const Process::Agent &agent) const noexcept override {
-					unsigned long long value = agent.getValue(field);
+					unsigned long long value = agent.value(field);
 					return value >= from && value <= to;
 				}
 

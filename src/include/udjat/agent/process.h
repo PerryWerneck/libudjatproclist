@@ -20,9 +20,10 @@
  #pragma once
 
  #include <udjat/defs.h>
- #include <udjat/agent.h>
+ #include <udjat/agent/abstract.h>
  #include <udjat/agent/state.h>
- #include <udjat/process/identifier.h>
+ #include <udjat/tools/process.h>
+ #include <udjat/tools/xml.h>
 
  namespace Udjat {
 
@@ -35,25 +36,22 @@
 		private:
 			friend class Process::Controller;
 
-			Identifier *pid = nullptr;
+			/// @brief The process identifier for this agent.
+			Identifier *proc = nullptr;
 
 			/// @brief Agent states.
 			std::vector<std::shared_ptr<State>> states;
 
 		protected:
 			Agent();
-			Agent(const pugi::xml_node &node);
-
-			inline const Identifier * getPid() const noexcept {
-				return this->pid;
-			}
+			Agent(const XML::Node &node);
 
 			void start() override;
 
 			/// @brief Test if the identifier exename match the agent.
 			/// @brief exename The identifier exename.
 			/// @return true if the identifier match the agent requirements.
-			virtual bool probe(const char *exename) const noexcept = 0;
+			virtual bool probe(const char *exename) const noexcept;
 
 			/// @brief Test if the identifier match the agent.
 			/// @param ident A process identifier.
@@ -66,31 +64,35 @@
 			void set(const pid_t pid);
 
 			/// @brief Set process identifier.
-			virtual void set(Identifier *info);
+			void set(Identifier *info);
 
 		public:
-			static std::shared_ptr<Udjat::Abstract::Agent> AgentFactory(const pugi::xml_node &node);
+			static std::shared_ptr<Udjat::Abstract::Agent> AgentFactory(const XML::Node &node);
 
-			virtual ~Agent();
+			~Agent() override;
 
-			void get(const Request &request, Response &response) override;
+			inline const pid_t pid() const noexcept {
+				return proc ? proc->pid() : (pid_t) -1;
+			}
 
-			// bool hasStates() const noexcept override;
+			inline const Identifier * process() const noexcept {
+				return proc;
+			}
 
-			std::shared_ptr<Abstract::State> StateFactory(const pugi::xml_node &node) override;
+			Value & getProperties(Value &value) const override;
 
-			Process::Identifier::State getState() const noexcept;
+			std::shared_ptr<Abstract::State> StateFactory(const XML::Node &node) override;
 
-			float getCPU() const noexcept;
+			float cpu_usage() const noexcept;
 
 			/// @brief The size of memory that are currently resident in RAM in bytes.
-			unsigned long long getRSS() const;
+			unsigned long long rss() const;
 
 			/// @brief Virtual memory size in bytes.
-			unsigned long long getVSize() const;
+			unsigned long long vsize() const;
 
 			/// @brief The amount of resident memory that is shared with other processes.
-			unsigned long long getShared() const;
+			unsigned long long shared() const;
 
 			/// @brief Field types.
 			enum Field : uint8_t {
@@ -100,13 +102,15 @@
 			};
 
 			static const char * fieldNames[];
-			static Field getField(const char *name);
+			static Field get_field(const char *name);
 
 			/// @brief Get field value in bytes.
-			unsigned long long getValue(Field field) const;
+			unsigned long long value(Field field) const;
 
 			/// @brief Get field value in % of the system total.
-			float getPercent(Field field) const;
+			float percent(Field field) const;
+
+			Process::Identifier::State process_state() const noexcept;
 
  		};
 
