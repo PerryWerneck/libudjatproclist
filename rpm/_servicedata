@@ -1,0 +1,4 @@
+<servicedata>
+<service name="tar_scm">
+                <param name="url">https://github.com/PerryWerneck/libudjatproclist</param>
+              <param name="changesrevision">58c9df16504ba385b597d92602a50bef58367171</param></service></servicedata>
