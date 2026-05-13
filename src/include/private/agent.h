@@ -63,7 +63,7 @@
 			PidFileAgent(const char *filename, const pugi::xml_node &node);
 
 			void start() override;
-			bool refresh() override;
+			bool refresh(bool) override;
 			bool probe(const char *exename) const noexcept override;
 
 
@@ -76,7 +76,7 @@
 
 		public:
 			StateCounterAgent(const char *statename, const pugi::xml_node &node);
-			bool refresh() override;
+			bool refresh(bool) override;
 			void start() override;
 
 		};

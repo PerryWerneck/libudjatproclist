@@ -31,7 +31,7 @@
 		super::start(Process::Controller::getInstance().count(state));
 	}
 
-	bool Process::StateCounterAgent::refresh() {
+	bool Process::StateCounterAgent::refresh(bool) {
 		return set(Process::Controller::getInstance().count(state));
 	}
 

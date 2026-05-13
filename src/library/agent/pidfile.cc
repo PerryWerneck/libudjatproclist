@@ -38,10 +38,10 @@
 	}
 
 	void Process::PidFileAgent::start() {
-		refresh();
+		refresh(false);
 	}
 
-	bool Process::PidFileAgent::refresh() {
+	bool Process::PidFileAgent::refresh(bool ondemand) {
 
 		if(!process()) {
 
@@ -65,7 +65,7 @@
 
 		}
 
-		return Process::Agent::refresh();
+		return Process::Agent::refresh(ondemand);
 
 	}
 
