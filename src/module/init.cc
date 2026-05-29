@@ -23,8 +23,10 @@
  #include <udjat/module/process.h>
 
  /// @brief Register udjat module.
- Udjat::Module * udjat_module_init() {
-	return new Udjat::Process::Module();
+ Udjat::Module * udjat_module_init(const Udjat::XML::Node &node) {
+	auto module = new Udjat::Process::Module();
+	module->autoclean();
+	return module;
  }
-
+ 
 
