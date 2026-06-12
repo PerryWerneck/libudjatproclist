@@ -4,6 +4,7 @@
 
 	<module name='civetweb' required='no' />
 	<module name='information' required='no' />
+	<module path='.build/udjat-module-proclist.so' required='yes' />
 
 	<!-- Monitor by process name -->
 	<agent type='process' name='codeblocks' exename='/usr/bin/codeblocks'>

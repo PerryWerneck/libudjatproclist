@@ -27,11 +27,17 @@
  using namespace std;
 
  int main(int argc, char **argv) {
+
+	Logger::console();
+	Logger::verbosity(9);
+	
 	return loader(argc,argv,[](Application &app) -> int {
 
+		/*
 		debug("Initializing " PACKAGE_NAME "...");
 		(new Udjat::Process::Module())->autoclean();
 		debug("... initilization of " PACKAGE_NAME " is complete");
+		*/
 
 		return 0;
 	});

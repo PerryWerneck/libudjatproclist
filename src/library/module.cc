@@ -32,14 +32,12 @@
 		return new Process::Module(name);
 	}
 
-	Process::Module::Module(const char *name, const char *description) : Udjat::Module{name,description}, Udjat::Abstract::Agent::Factory{"process"} {
+	Process::Module::Module(const char *name, const char *description) 
+		: Udjat::Module{name,description}, Udjat::Process::Agent::Factory{"process"} {
+		debug("aaaaaaaaaaaaaaaaaaaaaaaaaaaaa  Process module initialized");
 	}
 
 	Process::Module::~Module() {
-	}
-
-	std::shared_ptr<Abstract::Agent> Process::Module::AgentFactory(const XML::Node &node) const {
-		return Process::Agent::AgentFactory(node);
 	}
 
  }

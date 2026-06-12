@@ -19,41 +19,50 @@
 
  #include <config.h>
  #include <udjat/defs.h>
- #include <private/agent.h>
+ #include <udjat/agent/process.h>
  #include <private/controller.h>
+ #include <private/agent.h>
  #include <udjat/tools/xml.h>
  #include <udjat/tools/quark.h>
+ #include <memory>
+
+ using namespace std;
 
  namespace Udjat {
 
-	std::shared_ptr<Abstract::Agent> Process::Agent::AgentFactory(const XML::Node &node) {
+	Process::Agent::Factory::Factory(const char *name) : Abstract::Agent::Factory{name} {
+
+	}
+
+	Process::Agent::Factory::~Factory() {
+
+	}
+
+	std::shared_ptr<Abstract::Agent> Process::Agent::Factory::AgentFactory(const XML::Node &props) const {
 
 		// Process by exename
 		{
-			const char *exename = Attribute(node,"exename").as_string();
-
-			if(exename && *exename) {
-				return make_shared<ExeNameAgent>(Quark(exename).c_str(), node);
+			auto exename = props["exename"];
+			if(!exename.empty()) {
+				return make_shared<ExeNameAgent>(exename.as_quark(), props);
 			}
 
 		}
 
 		// Process by pidfile
 		{
-			const char *pidfile = Attribute(node,"pidfile").as_string();
-
-			if(pidfile && *pidfile) {
-				return make_shared<PidFileAgent>(Quark(pidfile).c_str(), node);
+			auto pidfile = props["pidfile"];
+			if(!pidfile.empty()) {
+				return make_shared<PidFileAgent>(pidfile.as_quark(), props);
 			}
 
 		}
 
 		// State counter.
 		{
-			const char *state = Attribute(node,"process-state").as_string();
-
-			if(state && *state) {
-				return make_shared<StateCounterAgent>(state, node);
+			auto state = props["process-state"];
+			if(!state.empty()) {
+				return make_shared<StateCounterAgent>(state.as_quark(), props);
 			}
 
 		}

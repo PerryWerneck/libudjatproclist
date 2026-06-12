@@ -22,6 +22,7 @@
  #include <udjat/agent/process.h>
  #include <udjat/agent.h>
  #include <udjat/agent/state.h>
+ #include <udjat/tools/properties.h>
 
  using namespace std;
 

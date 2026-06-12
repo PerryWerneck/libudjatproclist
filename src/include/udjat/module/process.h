@@ -22,7 +22,7 @@
  #include <config.h>
  #include <udjat/defs.h>
  #include <udjat/module/abstract.h>
- #include <udjat/agent/abstract.h>
+ #include <udjat/agent/process.h>
  #include <udjat/tools/xml.h>
  
  namespace Udjat {
@@ -30,15 +30,13 @@
 	namespace Process {
 
 		/// @brief Generic Process module.
-		class UDJAT_API Module : public Udjat::Module, private Udjat::Abstract::Agent::Factory {			
+		class UDJAT_API Module : public Udjat::Module, private Agent::Factory {			
 		public:
 
 			static Udjat::Module * Factory(const char *name = "process");
 
 			Module(const char *name = "process", const char *description = "Process monitor");
-			virtual ~Module();
-
-			std::shared_ptr<Abstract::Agent> AgentFactory(const XML::Node &node) const override;
+			~Module() override;
 
 		};
 

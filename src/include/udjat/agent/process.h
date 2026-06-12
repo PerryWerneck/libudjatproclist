@@ -67,7 +67,13 @@
 			void set(Identifier *info);
 
 		public:
-			static std::shared_ptr<Udjat::Abstract::Agent> AgentFactory(const XML::Node &node);
+
+			class UDJAT_API Factory : public Abstract::Agent::Factory {
+				public:
+					Factory(const char *name = "process");
+					~Factory() override;
+					std::shared_ptr<Abstract::Agent> AgentFactory(const XML::Node &node) const override;
+			};
 
 			~Agent() override;
 

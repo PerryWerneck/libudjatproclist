@@ -18,16 +18,21 @@
  */
 
  #include <config.h>
- #include <udjat/agent.h>
- #include <udjat/module.h>
+ #include <udjat/defs.h>
+ #include <udjat/module/abstract.h>
  #include <udjat/module/process.h>
  #include <udjat/tools/properties.h>
+ #include <udjat/tools/logger.h>
+ #include <stdexcept>
+ #include <cstdio>
+
+ #ifndef DEBUG
+	#error aqui
+ #endif
 
  /// @brief Register udjat module.
- Udjat::Module * udjat_module_init(const Udjat::Properties &) {
-	auto module = new Udjat::Process::Module();
-	module->autoclean();
-	return module;
+ UDJAT_API Udjat::Module * udjat_module_init(const Udjat::Properties &) {
+	return Udjat::Process::Module::Factory();
  }
  
 
