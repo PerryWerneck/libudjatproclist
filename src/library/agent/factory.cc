@@ -26,7 +26,7 @@
 
  namespace Udjat {
 
-	std::shared_ptr<Abstract::Agent> Process::Agent::AgentFactory(const pugi::xml_node &node) {
+	std::shared_ptr<Abstract::Agent> Process::Agent::AgentFactory(const XML::Node &node) {
 
 		// Process by exename
 		{

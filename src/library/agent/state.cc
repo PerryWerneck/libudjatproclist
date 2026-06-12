@@ -34,7 +34,7 @@
 		Process::Identifier state = Pid::Undefined;
 
 	public:
-		ProcessState(const char *s, const pugi::xml_node &node) : Process::Agent::State(node), state(Process::Identifier::StateFactory(s)) {
+		ProcessState(const char *s, const XML::Node &node) : Process::Agent::State(node), state(Process::Identifier::StateFactory(s)) {
 		}
 
 		bool test(const Process::Agent &agent) const noexcept override {
@@ -50,7 +50,7 @@
 		bool required;
 
 	public:
-		ProcessAvailable(bool r, const pugi::xml_node &node) : Process::Agent::State(node), required(r) {
+		ProcessAvailable(bool r, const XML::Node &node) : Process::Agent::State(node), required(r) {
 		}
 
 		bool test(const Process::Agent &agent) const noexcept override {
@@ -78,7 +78,7 @@
 
 	};
 
-	std::shared_ptr<Abstract::State> Process::Agent::StateFactory(const pugi::xml_node &node) {
+	std::shared_ptr<Abstract::State> Process::Agent::StateFactory(const XML::Node &node) {
 
 		std::shared_ptr<State> state;
 

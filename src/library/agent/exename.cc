@@ -24,7 +24,7 @@
 
  namespace Udjat {
 
-	Process::ExeNameAgent::ExeNameAgent(const char *e, const pugi::xml_node &node) : Process::Agent(node), exename(e) {
+	Process::ExeNameAgent::ExeNameAgent(const char *e, const XML::Node &node) : Process::Agent(node), exename(e) {
 	}
 
 	bool Process::ExeNameAgent::probe(const char *name) const noexcept {

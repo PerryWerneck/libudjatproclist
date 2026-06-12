@@ -31,7 +31,7 @@
 
 		class Agent::State : public Udjat::Abstract::State {
 		public:
-			State(const pugi::xml_node &node) : Udjat::Abstract::State(node) {
+			State(const XML::Node &node) : Udjat::Abstract::State(node) {
 			}
 
 			virtual bool test(const Process::Agent &agent) const noexcept = 0;
@@ -46,7 +46,7 @@
 			const char *exename;
 
 		public:
-			ExeNameAgent(const char *exename, const pugi::xml_node &node);
+			ExeNameAgent(const char *exename, const XML::Node &node);
 
 			bool probe(const char *exename) const noexcept override;
 
@@ -60,7 +60,7 @@
 			const char *pidfile;
 
 		public:
-			PidFileAgent(const char *filename, const pugi::xml_node &node);
+			PidFileAgent(const char *filename, const XML::Node &node);
 
 			void start() override;
 			bool refresh(bool) override;
@@ -75,7 +75,7 @@
 			Process::Identifier::State state;
 
 		public:
-			StateCounterAgent(const char *statename, const pugi::xml_node &node);
+			StateCounterAgent(const char *statename, const XML::Node &node);
 			bool refresh(bool) override;
 			void start() override;
 

@@ -21,6 +21,7 @@
  #include <udjat/defs.h>
  #include <udjat/loader.h>
  #include <udjat/module/abstract.h>
+ #include <udjat/module/process.h>
 
  using namespace Udjat;
  using namespace std;
@@ -29,7 +30,7 @@
 	return loader(argc,argv,[](Application &app) -> int {
 
 		debug("Initializing " PACKAGE_NAME "...");
-		udjat_module_init();
+		(new Udjat::Process::Module())->autoclean();
 		debug("... initilization of " PACKAGE_NAME " is complete");
 
 		return 0;

@@ -24,7 +24,7 @@
 
  namespace Udjat {
 
-	Process::StateCounterAgent::StateCounterAgent(const char *statename, const pugi::xml_node &node) : Udjat::Agent<unsigned int>(node), state(Process::Identifier::StateFactory(statename)) {
+	Process::StateCounterAgent::StateCounterAgent(const char *statename, const XML::Node &node) : Udjat::Agent<unsigned int>(node), state(Process::Identifier::StateFactory(statename)) {
 	}
 
 	void Process::StateCounterAgent::start() {

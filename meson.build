@@ -49,7 +49,7 @@ subdir('po')
 #
 libudjat = dependency(
   'libudjat',
-  version: '>=2.2.0',
+  version: '>=2.7.0',
   fallback: ['libudjat', 'static_library'],
 )
 
@@ -90,6 +90,7 @@ compiler_flags = [
   '-DHAVE_CONFIG_H=1',
   '-DBUILD_DATE='+time_epoch,
   '-DLOG_DOMAIN="process"',
+  '-Wno-overloaded-virtual',
 ]
 
 if enable_debug

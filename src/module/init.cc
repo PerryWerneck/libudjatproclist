@@ -21,9 +21,10 @@
  #include <udjat/agent.h>
  #include <udjat/module.h>
  #include <udjat/module/process.h>
+ #include <udjat/tools/properties.h>
 
  /// @brief Register udjat module.
- Udjat::Module * udjat_module_init(const Udjat::XML::Node &node) {
+ Udjat::Module * udjat_module_init(const Udjat::Properties &) {
 	auto module = new Udjat::Process::Module();
 	module->autoclean();
 	return module;
