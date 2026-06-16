@@ -26,10 +26,6 @@
  #include <stdexcept>
  #include <cstdio>
 
- #ifndef DEBUG
-	#error aqui
- #endif
-
  /// @brief Register udjat module.
  UDJAT_API Udjat::Module * udjat_module_init(const Udjat::Properties &) {
 	return Udjat::Process::Module::Factory();
