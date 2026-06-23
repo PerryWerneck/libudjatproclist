@@ -19,27 +19,24 @@
 
  #include <config.h>
  #include <udjat/defs.h>
- #include <udjat/loader.h>
+ #include <udjat/tools/loader.h>
  #include <udjat/module/abstract.h>
  #include <udjat/module/process.h>
 
  using namespace Udjat;
  using namespace std;
 
- int main(int argc, char **argv) {
+ int main(const int argc, const char **argv) {
 
-	Logger::console();
-	Logger::verbosity(9);
-	
-	return loader(argc,argv,[](Application &app) -> int {
+	return Udjat::loader(argc,argv);
 
-		/*
-		debug("Initializing " PACKAGE_NAME "...");
-		(new Udjat::Process::Module())->autoclean();
-		debug("... initilization of " PACKAGE_NAME " is complete");
-		*/
+	// return loader(argc,argv,[](Application &app) -> int {
 
-		return 0;
-	});
+	// 	debug("Initializing " PACKAGE_NAME "...");
+	// 	(new Udjat::Process::Module())->autoclean();
+	// 	debug("... initilization of " PACKAGE_NAME " is complete");
+
+	// 	return 0;
+	// });
 
  }
