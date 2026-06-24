@@ -50,7 +50,7 @@ subdir('po')
 libudjat = dependency(
   'libudjat',
   version: '>=2.7.0',
-  fallback: ['libudjat', 'dynamic_library'],
+  fallback: ['libudjat'],
 )
 
 lib_deps = [
@@ -66,7 +66,7 @@ else
   sysinfo_s = dependency(
       'sysinfo',
       required: true,
-      fallback: [ 'sysinfo', 'static_library' ],
+      fallback: ['sysinfo'],
       default_options: ['default_library=static']  
   ) 
   extra_libs += [ sysinfo_s ]
