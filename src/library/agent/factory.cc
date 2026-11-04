@@ -22,7 +22,7 @@
  #include <udjat/agent/process.h>
  #include <private/controller.h>
  #include <private/agent.h>
- #include <udjat/tools/xml.h>
+ #include <udjat/tools/properties.h>
  #include <udjat/tools/quark.h>
  #include <memory>
 
@@ -38,7 +38,7 @@
 
 	}
 
-	std::shared_ptr<Abstract::Agent> Process::Agent::Factory::AgentFactory(const XML::Node &props) const {
+	std::shared_ptr<Abstract::Agent> Process::Agent::Factory::AgentFactory(const Properties &props) const {
 
 		// Process by exename
 		{

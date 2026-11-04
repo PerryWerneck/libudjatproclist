@@ -20,10 +20,10 @@
  #pragma once
 
  #include <udjat/defs.h>
- #include <udjat/agent/abstract.h>
+ #include <udjat/agent.h>
  #include <udjat/agent/state.h>
  #include <udjat/tools/process.h>
- #include <udjat/tools/xml.h>
+ #include <udjat/tools/properties.h>
 
  namespace Udjat {
 
@@ -44,7 +44,7 @@
 
 		protected:
 			Agent();
-			Agent(const XML::Node &node);
+			Agent(const Properties &props);
 
 			void start() override;
 
@@ -72,7 +72,7 @@
 				public:
 					Factory(const char *name = "process");
 					~Factory() override;
-					std::shared_ptr<Abstract::Agent> AgentFactory(const XML::Node &node) const override;
+					std::shared_ptr<Abstract::Agent> AgentFactory(const Properties &props) const override;
 			};
 
 			~Agent() override;
@@ -85,9 +85,9 @@
 				return proc;
 			}
 
-			Value & getProperties(Value &value) const override;
+			Value & get_properties(Variant &value) const override;
 
-			std::shared_ptr<Abstract::State> StateFactory(const XML::Node &node) override;
+			std::shared_ptr<Abstract::State> StateFactory(const Properties &props) override;
 
 			float cpu_usage() const noexcept;
 

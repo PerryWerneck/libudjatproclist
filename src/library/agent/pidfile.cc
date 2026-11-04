@@ -30,7 +30,7 @@
 
  namespace Udjat {
 
-	Process::PidFileAgent::PidFileAgent(const char *filename, const XML::Node &node) : Process::Agent(node), pidfile(filename) {
+	Process::PidFileAgent::PidFileAgent(const char *filename, const Properties &props) : Process::Agent(props), pidfile(filename) {
 	}
 
 	bool Process::PidFileAgent::probe(const char UDJAT_UNUSED(*exename)) const noexcept {

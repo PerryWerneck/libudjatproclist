@@ -23,7 +23,7 @@
  #include <udjat/defs.h>
  #include <udjat/module/abstract.h>
  #include <udjat/agent/process.h>
- #include <udjat/tools/xml.h>
+ #include <udjat/tools/properties.h>
  
  namespace Udjat {
 

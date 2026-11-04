@@ -22,7 +22,6 @@
  #include <private/agent.h>
  #include <udjat/agent/state.h>
  #include <udjat/tools/logger.h>
- #include <udjat/tools/parse.h>
 
  using Pid = Udjat::Process::Identifier;
 
@@ -34,7 +33,7 @@
 		Process::Identifier state = Pid::Undefined;
 
 	public:
-		ProcessState(const char *s, const XML::Node &node) : Process::Agent::State(node), state(Process::Identifier::StateFactory(s)) {
+		ProcessState(const char *s, const Properties &props) : Process::Agent::State(props), state(Process::Identifier::StateFactory(s)) {
 		}
 
 		bool test(const Process::Agent &agent) const noexcept override {
@@ -50,7 +49,7 @@
 		bool required;
 
 	public:
-		ProcessAvailable(bool r, const XML::Node &node) : Process::Agent::State(node), required(r) {
+		ProcessAvailable(bool r, const Properties &props) : Process::Agent::State(props), required(r) {
 		}
 
 		bool test(const Process::Agent &agent) const noexcept override {
@@ -72,30 +71,27 @@
 		}
 
 	public:
-		ProcessUsage(const XML::Node &node) : Process::Agent::State(node) {
+		ProcessUsage(const Properties &props) : Process::Agent::State(props) {
 			XML::parse(node,from,to);
 		}
 
 	};
 
-	std::shared_ptr<Abstract::State> Process::Agent::StateFactory(const XML::Node &node) {
+	std::shared_ptr<Abstract::State> Process::Agent::StateFactory(const Properties &props) {
 
 		std::shared_ptr<State> state;
 
-		pugi::xml_attribute attribute;
-
 		// Agent state by process
-		attribute = node.attribute("process-state");
-		if(attribute) {
+		if(props.contains("process-state")) {
 
-			const char *attr = attribute.as_string();
+			const auto attr = props.get("process-state");
 
-			if(strcasecmp(attr,"available") == 0) {
-				state = make_shared<ProcessAvailable>(true,node);
-			} else if(strcasecmp(attr,"not-available") == 0) {
-				state = make_shared<ProcessAvailable>(false,node);
+			if(strcasecmp(attr.c_str(),"available") == 0) {
+				state = make_shared<ProcessAvailable>(true,props);
+			} else if(strcasecmp(attr.c_str(),"not-available") == 0) {
+				state = make_shared<ProcessAvailable>(false,props);
 			} else {
-				state = make_shared<ProcessState>(attribute.as_string(),node);
+				state = make_shared<ProcessState>(attr.c_str(),props);
 			}
 
 			if(state) {
@@ -104,9 +100,8 @@
 			}
 		}
 
-		attribute = node.attribute("field-name");
-		if(attribute) {
-			Process::Agent::Field field = Process::Agent::get_field(attribute.as_string(Process::Agent::fieldNames[0]));
+		if(props.contains("field-name")) {
+			Process::Agent::Field field = Process::Agent::get_field(props.get("field-name").c_str());
 
 			/// @brief State based on field value.
 			class Value : public Process::Agent::State {
@@ -116,8 +111,8 @@
 				unsigned long long to = 0;
 
 			public:
-				Value(Process::Agent::Field f, const XML::Node &node) : Process::Agent::State(node), field(f) {
-					parse_byte_range(node,from,to);
+				Value(Process::Agent::Field f, const Properties &props) : Process::Agent::State(props), field(f) {
+					parse_byte_range(props,from,to);
 				}
 
 				bool test(const Process::Agent &agent) const noexcept override {
@@ -127,7 +122,7 @@
 
 			};
 
-			return make_shared<Value>(field, node);
+			return make_shared<Value>(field, props);
 
 		}
 

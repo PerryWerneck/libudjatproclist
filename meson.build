@@ -20,9 +20,14 @@
 project(
 	'udjatproclist', 
 	['cpp'],
-	version: '2.1.1',
+	version: '3.0.0',
   meson_version: '>=1.3.0',
-	default_options : ['c_std=c11', 'cpp_std=c++17'],
+	default_options : [ 
+    'c_std=c11', 
+    'cpp_std=c++17', 
+    'buildtype=release', 
+    'default_library=both' 
+  ],
 	license: 'GPL-3.0-or-later',
 )
 
@@ -49,9 +54,9 @@ subdir('po')
 #
 libudjat = dependency(
   'libudjat',
-  version: '>=2.7.0',
+  version: '>=3.0.0',
   fallback: ['libudjat'],
-)
+) 
 
 lib_deps = [
   libudjat,
@@ -180,27 +185,13 @@ pkg = import('pkgconfig')
 #
 # OS dependencies
 #
-if host_machine.system() == 'windows'
-
-  pkg.generate(
-    name: 'lib' + meson.project_name(),
-    description: project_description,
-    requires: [ 'libudjat' ],
-    requires_private: [ sysinfo ],
-    libraries: [ '-l' + meson.project_name() ]
-  )
-
-else
-
-  pkg.generate(
-    name: 'lib' + meson.project_name(),
-    description: project_description,
-    requires: [ 'libudjat' ],
-    requires_private: [ sysinfo ],
-    libraries: [ '-l' + meson.project_name() ]
-  )
-
-endif
+pkg.generate(
+  name: 'lib' + meson.project_name(),
+  description: project_description,
+  requires: [ 'libudjat' ],
+  requires_private: [ sysinfo ],
+  libraries: [ '-l' + meson.project_name() ]
+)
 
 #
 # Targets
@@ -224,7 +215,7 @@ if host_machine.system() == 'windows'
     )
   )
 
-  dynamic = shared_library(
+  libudjatproclist = library(
     meson.project_name(), 
     config_src + lib_src + resources,
     install: true,
@@ -241,10 +232,9 @@ if host_machine.system() == 'windows'
   # https://mesonbuild.com/Reference-manual_functions.html#shared_library
   module = shared_library(
     'sysinfo', 
-    config_src + module_src + resources,
+    config_src + module_src + lib_src + resources,
     name_prefix: 'udjat-module-',
     install: true,
-    link_with: dynamic,
     install_dir: libudjat.get_variable('module_path'),
     gnu_symbol_visibility: 'hidden',
     dependencies: lib_deps + extra_libs,
@@ -253,7 +243,7 @@ if host_machine.system() == 'windows'
 
 else
 
-  dynamic = shared_library(
+  libudjatproclist = library(
     meson.project_name(), 
     config_src + lib_src,
     install: true,
@@ -268,12 +258,11 @@ else
   # https://mesonbuild.com/Reference-manual_functions.html#shared_library
   module = shared_library(
     'proclist', 
-    config_src + module_src,
+    config_src + lib_src + module_src,
     name_prefix: 'udjat-module-',
     install: true,
     install_tag: 'module',
     cpp_args: [ '-ffat-lto-objects' ],
-    link_with: dynamic,
     install_dir: libudjat.get_variable('module_path'),
     gnu_symbol_visibility: 'hidden',
     dependencies: lib_deps + extra_libs,
@@ -282,20 +271,16 @@ else
 
 endif
 
-static_library(
-  meson.project_name(), 
-  config_src + lib_src,
-  install: true,
-  cpp_args: [ '-DSTATIC_LIBRARY', '-fno-lto' ],
-    dependencies: lib_deps + extra_libs,
-  include_directories: includes_dir
-)
+libudjatproclist_dep = declare_dependency(
+  link_with : libudjatproclist,
+  include_directories : includes_dir
+) 
 
 executable(
   meson.project_name(),
   config_src + test_src,
   install: false,
-  link_with: [ dynamic, module ],
+  link_with: [ module ],
   dependencies: [ libudjat ],
   include_directories: includes_dir
 )

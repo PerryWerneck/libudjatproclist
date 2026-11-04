@@ -1,7 +1,7 @@
 [wrap-git]
 url = https://github.com/PerryWerneck/libudjatsysinfo.git
-revision = develop
+revision = v3
 depth = 1
 
 [provide]
-sysinfo = static_library
+sysinfo = libudjatsysinfo_dep

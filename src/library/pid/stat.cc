@@ -353,7 +353,7 @@
 	Process::Identifier::Stat::Stat(const Process::Identifier *info) : Stat{(pid_t) *info} {
 	}
 
-	Udjat::Value & Process::Identifier::Stat::getProperties(Udjat::Value &value) const {
+	Udjat::Value & Process::Identifier::Stat::get_properties(Udjat::Variant &value) const {
 		value["vsize"] = properties.vsize;
 		value["rss"] = rss();
 		value["shared"] = shared();

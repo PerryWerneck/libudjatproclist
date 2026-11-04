@@ -102,7 +102,7 @@
 
 			~Identifier();
 
-			Udjat::Value & getProperties(Udjat::Value &value) const;
+			Udjat::Value & get_properties(Udjat::Variant &value) const;
 
 			/// @brief Data from /proc/pid/stat.
 			class UDJAT_API Stat {
@@ -169,7 +169,7 @@
 				Stat(pid_t pid);
 				Stat(const Identifier *info);
 
-				Udjat::Value & getProperties(Udjat::Value &value) const;
+				Udjat::Value & get_properties(Udjat::Variant &value) const;
 
 				static unsigned long long pgsize();
 

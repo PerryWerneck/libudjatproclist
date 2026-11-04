@@ -61,8 +61,8 @@
 		throw runtime_error("Invalid or unexpected process state");
 	}
 
-	Udjat::Value & Process::Identifier::getProperties(Udjat::Value &value) const {
-		Stat(*this).getProperties(value);
+	Udjat::Value & Process::Identifier::get_properties(Udjat::Variant &value) const {
+		Stat(*this).get_properties(value);
 		value["cpu"].setFraction(cpu.percent);
 		return value;
 	}

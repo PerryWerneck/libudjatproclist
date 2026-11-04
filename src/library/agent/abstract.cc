@@ -48,7 +48,7 @@
 	Process::Agent::Agent() {
 	}
 
-	Process::Agent::Agent(const XML::Node &node) : Abstract::Agent(node) {
+	Process::Agent::Agent(const Properties &props) : Abstract::Agent(props) {
 	}
 
 	Process::Agent::~Agent() {
@@ -98,9 +98,6 @@
 	}
 
 	void Process::Agent::start() {
-#ifdef DEBUG
-		info() << "Starting states=" << states.size() << endl;
-#endif // DEBUG
 		Process::Controller::getInstance().insert(this);
 
 		if(!proc) {
@@ -109,10 +106,10 @@
 
 	}
 
-	Udjat::Value & Process::Agent::getProperties(Udjat::Value &value) const {
-		super::getProperties(value);
+	Udjat::Value & Process::Agent::get_properties(Udjat::Variant &value) const {
+		super::get_properties(value);
 		if(proc) {
-			proc->getProperties(value);
+			proc->get_properties(value);
 		}
 		return value;
 	}
