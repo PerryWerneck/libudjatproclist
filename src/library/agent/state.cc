@@ -22,6 +22,11 @@
  #include <private/agent.h>
  #include <udjat/agent/state.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/properties.h>
+ #include <udjat/tools/converters.h>
+ #include <udjat/tools/string.h>
+ #include <cfloat>
+ #include <climits>
 
  using Pid = Udjat::Process::Identifier;
 
@@ -72,7 +77,16 @@
 
 	public:
 		ProcessUsage(const Properties &props) : Process::Agent::State(props) {
-			XML::parse(node,from,to);
+			if(props.contains("from")) {
+				from = props.get("from",0.0f);
+			} else {
+				from = props.get("value",0.0f);
+			}	
+			if(props.contains("to")) {
+				to = props.get("to",FLT_MAX);
+			} else {
+				to = props.get("value",FLT_MAX);
+			}
 		}
 
 	};
@@ -112,7 +126,16 @@
 
 			public:
 				Value(Process::Agent::Field f, const Properties &props) : Process::Agent::State(props), field(f) {
-					parse_byte_range(props,from,to);
+					if(props.contains("from")) {
+						from = props.get("from").as_ull();
+					} else {
+						from = props.get("value").as_ull();
+					}
+					if(props.contains("to")) {
+						to = props.get("to").as_ull();
+					} else {
+						to = props.get("value").as_ull(ULLONG_MAX);
+					}
 				}
 
 				bool test(const Process::Agent &agent) const noexcept override {
