@@ -371,7 +371,8 @@
 	}
 
 	unsigned long long Process::Identifier::Stat::shared() const {
-		throw system_error(ENOTSUP, system_category(),"Shared memory by process is not implemented");
+		// throw system_error(ENOTSUP, system_category(),"Shared memory by process is not implemented");
+		return 0;
 	}
 
 

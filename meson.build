@@ -165,6 +165,7 @@ lib_src = [
   'src/library/controller/load.cc',
   'src/library/pid/identifier.cc',
   'src/library/pid/stat.cc',
+  'src/library/testcases.cc',
 ]
 
 module_src = [

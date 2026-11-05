@@ -34,7 +34,6 @@
 
 	Process::Module::Module(const char *name, const char *description) 
 		: Udjat::Module{name,description}, Udjat::Process::Agent::Factory{"process"} {
-		debug("aaaaaaaaaaaaaaaaaaaaaaaaaaaaa  Process module initialized");
 	}
 
 	Process::Module::~Module() {
